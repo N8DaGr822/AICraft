@@ -1,0 +1,2 @@
+# PDF fixtures contain byte offsets; line-ending conversion invalidates their cross-reference tables.
+*.pdf binary
