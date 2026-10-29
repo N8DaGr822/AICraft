@@ -6,3 +6,5 @@ AITest/wwwroot/wasm/
 publish/
 .vs/
 AITest/wwwroot/licenses/dependencies/
+rust-pdf/target/
+AITest/wwwroot/wasm-pdf/

@@ -6,7 +6,7 @@ A mobile-friendly Blazor WebAssembly photo lab for trying Storytold Rust functio
 
 Choose a JPEG, PNG, or WebP; adjust exposure, saturation, hue, or grayscale; compare the original working copy with the edited output; download a PNG. Files remain in the browser. Each Apply processes the original working copy, so adjustments do not accumulate. Reset restores the original pixels.
 
-For mobile memory limits, input files are limited to 20 MB and working copies to four megapixels / 2560 pixels per side. PNG exports use those working dimensions and do not preserve EXIF, original ICC profiles, or other source metadata. This is an 8-bit browser-decoded sRGB experiment, not the full PhotoCraft editor. Very large compressed images can still exceed a mobile browser's decode memory. PDF and vector tools are next priorities, not implemented features.
+For mobile memory limits, input files are limited to 20 MB and working copies to four megapixels / 2560 pixels per side. PNG exports use those working dimensions and do not preserve EXIF, original ICC profiles, or other source metadata. This is an 8-bit browser-decoded sRGB experiment, not the full PhotoCraft editor. Very large compressed images can still exceed a mobile browser's decode memory. The PDF lab provides page extraction and rotation; vector tools remain planned.
 
 ## Integration
 
@@ -37,3 +37,25 @@ In repository Settings > Pages, select **GitHub Actions** as the source. Push to
 ## Attribution
 
 PhotoCraft and its photocraft-color / photocraft-cms crates are copyright ArtCraft Team and contributors, licensed MIT OR Apache-2.0. See `THIRD-PARTY-NOTICES.md` and the license copies in `AITest/wwwroot/licenses/`. Bootstrap retains its MIT license header in the distributed stylesheet.
+
+## PDF lab
+
+The `/pdf` page uses PdfCraft's real COS parser and page organization library, pinned to `c735fb7da55264e7cd84eed0688ec0cec5e628d4`. Its WebAssembly module loads only when the PDF lab opens. Select a PDF or use the bundled three-page sample, inspect page dimensions and rotations, then extract a range or ordered list (for example `3, 1-2`) with optional rotation. Download or open the new PDF using the browser's own viewer.
+
+Files stay in the browser. Limits are 15 MB input, 200 pages, 20,000 objects, 30 MB output, and a 30-second worker deadline. These are practical lab limits, not a total parser-memory guarantee. Encrypted PDFs and signature fields are refused. Extraction copies selected pages, but accessibility tagging and some document-level features do not carry over; review exports before use. It is not a redaction tool. Restart PDF lab frees the document and allows retry after a worker failure. Leaving the page frees its worker and download URLs.
+
+The PDF worker follows the photo worker's component-owned pattern without adding a shared abstraction. The photo processing module remains independent. The sidebar's starter Counter link now opens PDF lab; the Counter component remains in the source.
+
+Build the PDF module before running/publishing Blazor:
+
+```sh
+cargo +1.95.0 test --locked --manifest-path rust-pdf/Cargo.toml
+cargo +1.95.0 build --locked --manifest-path rust-pdf/Cargo.toml --release --target wasm32-unknown-unknown
+wasm-bindgen rust-pdf/target/wasm32-unknown-unknown/release/aicraft_pdf.wasm --target web --out-dir AITest/wwwroot/wasm-pdf --out-name aicraft_pdf
+node scripts/test-pdf-wasm.mjs
+```
+
+The PDF tests exercise page order, content retention, omitted-page removal, rotation, source preservation, and invalid inputs. The workflow retains the exported test PDF as an artifact for independent inspection. The sample fixture can be regenerated with `python scripts/create-pdf-fixture.py`.
+
+Vector tools remain the next priority.
+

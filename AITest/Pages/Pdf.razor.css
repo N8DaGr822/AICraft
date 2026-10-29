@@ -1,0 +1,13 @@
+.pdf-lab { display: grid; grid-template-columns: minmax(250px, 330px) minmax(0, 1fr); gap: 2rem; margin: 1.5rem 0; }
+.pdf-controls { padding: 1.25rem; background: #f2f5f8; border: 1px solid #dbe3e9; border-radius: 12px; }
+.pdf-controls label { display: block; font-weight: 600; margin: 1rem 0 .5rem; }
+.pdf-controls small { display: block; color: #52616c; margin: .75rem 0; }
+.pdf-controls .btn, .pdf-controls input, .pdf-controls select { min-height: 44px; }
+.pdf-controls button { margin-top: .75rem; }
+.pdf-actions { display: flex; flex-wrap: wrap; gap: .75rem; margin: 1rem 0; }
+.pdf-details { min-width: 0; }
+.pdf-details h2 { font-size: 1.35rem; overflow-wrap: anywhere; }
+.empty-state { color: #52616c; padding: 2rem; border: 1px dashed #c4d0da; border-radius: 12px; }
+.pdf-credit { color: #52616c; font-size: .9rem; }
+@media (max-width: 1000px) { .pdf-lab { grid-template-columns: 1fr; } }
+.pdf-actions[hidden] { display: none; }

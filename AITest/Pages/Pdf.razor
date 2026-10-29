@@ -1,0 +1,189 @@
+@page "/pdf"
+@implements IAsyncDisposable
+@inject IJSRuntime JS
+
+<PageTitle>AICraft · PDF lab</PageTitle>
+<h1>PDF lab</h1>
+<p class="lead">Keep the pages you need.</p>
+<p>Inspect a PDF, extract pages in your chosen order, and optionally rotate them. Files stay on this device.</p>
+@if (error is not null)
+{
+    <div class="alert alert-danger" role="alert">@error</div>
+}
+<p role="status" aria-live="polite">@status</p>
+<div class="pdf-lab" aria-busy="@busy.ToString().ToLowerInvariant()">
+    <section class="pdf-controls" aria-label="PDF tools">
+        <label for="pdf-file">Choose a PDF</label>
+        <input id="pdf-file" type="file" accept=".pdf,application/pdf" @ref="fileInput" @onchange="LoadFile"
+               disabled="@(!ready || busy)" class="form-control" />
+        <small>Up to 15 MB and 200 pages. Encrypted PDFs and signature fields are not supported.</small>
+        <button class="btn btn-outline-primary" disabled="@(!ready || busy)" @onclick="LoadSample">Try sample PDF</button>
+        <fieldset disabled="@(info is null || busy)">
+            <legend class="visually-hidden">Export options</legend>
+            <label for="pdf-pages">Pages to export</label>
+            <input id="pdf-pages" class="form-control" @bind="selectedPages" @bind:after="InvalidateExport" placeholder="1-3, 5" aria-describedby="range-help" />
+            <small id="range-help">Use ranges or a list, such as 1-3, 5. Use 3, 1-2 to reorder. Each page can appear once.</small>
+            <label for="pdf-rotation">Rotate exported pages</label>
+            <select id="pdf-rotation" class="form-select" @bind="rotation" @bind:after="InvalidateExport">
+                <option value="0">Keep current rotation</option>
+                <option value="90">90° clockwise</option>
+                <option value="180">180°</option>
+                <option value="270">90° counterclockwise</option>
+            </select>
+            <button class="btn btn-primary" @onclick="Export">Create PDF</button>
+        </fieldset>
+        <div class="pdf-actions" hidden="@(!exportReady || busy)">
+            <a @ref="download" class="btn btn-success" download>Download PDF</a>
+            <a @ref="preview" target="_blank" rel="noopener" class="btn btn-outline-secondary">Open exported PDF</a>
+        </div>
+        <small>Export makes a new copy. Accessibility tags and some document-level features may not carry over. Review the exported PDF before using it.</small>
+        <button class="btn btn-link" disabled="@busy" @onclick="Start">Restart PDF lab</button>
+    </section>
+    <section class="pdf-details" aria-label="PDF page information">
+        @if (info is null)
+        {
+            <div class="empty-state"><h2>Your document, page by page</h2><p>Choose a PDF or try the three-page sample. Page details will appear here.</p></div>
+        }
+        else
+        {
+            <h2>@info.Filename</h2>
+            <p>@info.Count pages · PDF @info.Version</p>
+            @if (!string.IsNullOrWhiteSpace(info.Title)) { <p>Title: @info.Title</p> }
+            @if (info.Repaired)
+            {
+                <div class="alert alert-warning">PdfCraft repaired parts of this file while opening it. Check the exported pages carefully.</div>
+            }
+            <div class="table-responsive">
+                <table class="table">
+                    <caption>Crop box dimensions in points, before rotation (72 points = 1 inch).</caption>
+                    <thead><tr><th scope="col">Page</th><th scope="col">Width</th><th scope="col">Height</th><th scope="col">Rotation</th></tr></thead>
+                    <tbody>
+                        @foreach (var pdfPage in info.Pages)
+                        {
+                            <tr><th scope="row">@pdfPage.Number</th><td>@pdfPage.Width.ToString("0.#")</td><td>@pdfPage.Height.ToString("0.#")</td><td>@pdfPage.Rotation°</td></tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </section>
+</div>
+<p class="pdf-credit">Powered by <a href="https://github.com/storytold/pdfcraft">PdfCraft</a> Rust libraries. PDF viewing uses your browser's PDF viewer. Vector tools are next.</p>
+
+@code {
+    private ElementReference fileInput, download, preview;
+    private IJSObjectReference? module, editor;
+    private bool ready, busy, exportReady, disposed;
+    private string status = "Loading the PDF engine…";
+    private string? error;
+    private PdfInfo? info;
+    private string selectedPages = "";
+    private int rotation;
+
+    // Blazor Lifecycle: Create the worker only after the file and download elements exist.
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender) return;
+        await Start();
+        if (!disposed) StateHasChanged();
+    }
+
+    private async Task Start()
+    {
+        if (busy || disposed) return;
+        busy = true;
+        ready = exportReady = false;
+        info = null;
+        error = null;
+        status = "Loading the PDF engine…";
+        try
+        {
+            if (editor is not null)
+            {
+                await editor.InvokeVoidAsync("dispose");
+                await editor.DisposeAsync();
+                editor = null;
+            }
+            module ??= await JS.InvokeAsync<IJSObjectReference>("import", "./js/pdf-editor.js");
+            if (disposed) { await module.DisposeAsync(); return; }
+            editor = await module.InvokeAsync<IJSObjectReference>("create", fileInput, download, preview);
+            if (disposed) { await editor.InvokeVoidAsync("dispose"); await editor.DisposeAsync(); return; }
+            ready = true;
+            status = "Ready. Choose a PDF or try the sample.";
+        }
+        catch (JSException ex) { error = ex.Message; status = "PDF engine unavailable. Use Restart PDF lab to retry."; }
+        finally { busy = false; }
+    }
+
+    private Task LoadFile() => Load(false);
+    private Task LoadSample() => Load(true);
+
+    private async Task Load(bool sample)
+    {
+        if (busy || !ready || editor is null) return;
+        busy = true;
+        exportReady = false;
+        info = null;
+        error = null;
+        status = "Reading PDF…";
+        try
+        {
+            info = await editor.InvokeAsync<PdfInfo>("load", sample);
+            selectedPages = info.Count == 1 ? "1" : $"1-{info.Count}";
+            rotation = 0;
+            status = $"Opened {info.Filename}: {info.Count} pages.";
+        }
+        catch (JSException ex) { error = ex.Message; status = "PDF could not be opened."; }
+        finally { busy = false; }
+    }
+
+    private async Task InvalidateExport()
+    {
+        exportReady = false;
+        if (editor is not null) await editor.InvokeVoidAsync("clearOutput");
+    }
+
+    private async Task Export()
+    {
+        if (busy || info is null || editor is null) return;
+        busy = true;
+        exportReady = false;
+        error = null;
+        status = "Creating PDF…";
+        try
+        {
+            var bytes = await editor.InvokeAsync<long>("exportPdf", selectedPages, rotation);
+            exportReady = true;
+            status = $"PDF ready: {bytes / 1024d:0.#} KB. Download or open it to review.";
+        }
+        catch (JSException ex) { error = ex.Message; status = "PDF could not be created. Check your page selection."; }
+        finally { busy = false; }
+    }
+
+    // Component Ownership: Free the document's WebAssembly memory and revoke output URLs on navigation.
+    public async ValueTask DisposeAsync()
+    {
+        disposed = true;
+        if (editor is not null) { await editor.InvokeVoidAsync("dispose"); await editor.DisposeAsync(); }
+        if (module is not null) await module.DisposeAsync();
+    }
+
+    public sealed class PdfInfo
+    {
+        public string Filename { get; set; } = "";
+        public string Version { get; set; } = "";
+        public string? Title { get; set; }
+        public int Count { get; set; }
+        public bool Repaired { get; set; }
+        public List<PdfPageInfo> Pages { get; set; } = [];
+    }
+
+    public sealed class PdfPageInfo
+    {
+        public int Number { get; set; }
+        public double Width { get; set; }
+        public double Height { get; set; }
+        public int Rotation { get; set; }
+    }
+}
+
