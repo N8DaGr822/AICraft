@@ -1,0 +1,5 @@
+.ledger-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.5rem; }
+.ledger-card { background: #f2f5f8; padding: 1.25rem; border: 1px solid #dbe3e9; border-radius: 12px; }
+.ledger-card label { display: block; margin: .75rem 0 .25rem; font-weight: 600; }
+.ledger-card input, .ledger-card select, .ledger-card .btn { min-height: 44px; }
+@media (max-width: 900px) { .ledger-grid { grid-template-columns: 1fr; } }

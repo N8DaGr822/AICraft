@@ -10,20 +10,16 @@
 <div class="@NavMenuCssClass nav-scrollable" @onclick="ToggleNavMenu">
     <nav class="nav flex-column">
         <div class="nav-item px-3">
-            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Photo lab
-            </NavLink>
+            <NavLink class="nav-link" href="apps"><span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> All apps</NavLink>
         </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="pdf">
-                <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> PDF lab
-            </NavLink>
-        </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="vector">
-                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Vector lab
-            </NavLink>
-        </div>
+        @foreach (var app in AITest.Apps.AppCatalog.All)
+        {
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="@app.Route" Match="NavLinkMatch.All">
+                    <span class="bi @app.Icon" aria-hidden="true"></span> @app.Name
+                </NavLink>
+            </div>
+        }
     </nav>
 </div>
 

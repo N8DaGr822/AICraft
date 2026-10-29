@@ -72,3 +72,18 @@ node scripts/test-vector-wasm.mjs
 
 Build all three modules before publishing. Run `python scripts/collect-licenses.py` to bundle dependency licenses. Native and compiled WASM tests cover shape families, rotation, bounds, and validation.
 
+
+## App launcher and Ledger Reborn
+
+`/apps` lists the registered tools. `AITest/Apps/AppCatalog.cs` supplies launcher and sidebar metadata; existing routes remain unchanged. Each Razor page owns its worker and runtime lifetime. New Rust tools register their page here and add their pinned crate build/test steps to the existing Pages workflow. Registration does not automatically port an upstream desktop application.
+
+`/ledger` integrates the unmodified Ledger Reborn engine at `d7f6b8a1f4ad6c4ae8b10100d1c93cf15940c21d` through Pyodide `314.0.7`. The runtime loads from jsDelivr only when Open ledger is selected; Python sources ship with this site. No ledger data is uploaded. This first workflow creates customers and service invoices, records partial payments, shows current invoice balances and date-specific trial balance / year-to-date accrual profit, and exports SQLite backups. It does not port the upstream desktop UI, tax, payroll, inventory workflows, or backup restoration.
+
+Ledger amounts cross the bridge as integer cents. An allowlisted Python adapter calls the engine; it cannot execute arbitrary Python supplied by the UI. A module worker serializes requests. A Web Lock allows one active ledger tab per origin. Committed SQLite snapshots are stored in IndexedDB before success is acknowledged. A failed storage write closes the worker; reopen to restore the last saved snapshot. A timeout may happen after a save, so check entries before retrying. Navigation terminates the worker and releases the lock. Browser storage can be evicted or cleared; download backups. Data is device/browser-specific and is not synchronized. Use synthetic data for this experimental integration.
+
+The Pyodide test exercises a $100 invoice / $40 payment / $60 remaining balance, balanced journals, invalid payments, integer-cent validation, and SQLite reopening:
+
+```sh
+npm install --prefix .tools/pyodide pyodide@314.0.7 --no-audit --no-fund
+node scripts/test-ledger-pyodide.mjs
+```

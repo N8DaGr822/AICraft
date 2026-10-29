@@ -1,0 +1,30 @@
+import assert from 'node:assert/strict';
+import { readFile, mkdir, writeFile } from 'node:fs/promises';
+import { loadPyodide } from '../.tools/pyodide/node_modules/pyodide/pyodide.mjs';
+const py = await loadPyodide();
+for (const name of ['ledger.py','ledger_bridge.py']) py.FS.writeFile(`/home/pyodide/${name}`, await readFile(new URL(`../AITest/wwwroot/python/${name}`, import.meta.url)));
+await py.runPythonAsync('from ledger_bridge import dispatch, book');
+const call = (action,args={}) => {
+    py.globals.set('request_json',JSON.stringify({action,args,asOf:'2026-10-29'}));
+    return JSON.parse(py.runPython('dispatch(request_json)'));
+};
+call('contact',{name:'Synthetic customer'});
+let result = call('invoice',{date:'2026-10-01',contactId:1,description:'Test service',amountCents:10000,requestId:'test-invoice'});
+assert.equal(result.invoices[0].outstandingCents,10000);
+result = call('payment',{date:'2026-10-02',invoiceId:1,amountCents:4000,requestId:'test-payment'});
+assert.equal(result.invoices[0].outstandingCents,6000);
+assert.equal(result.profitCents,10000);
+assert.equal(result.rows.find(x=>x.code==='1000').debitCents,4000);
+assert.equal(result.rows.find(x=>x.code==='1100').debitCents,6000);
+assert.equal(result.rows.reduce((a,r)=>a+r.debitCents-r.creditCents,0),0);
+assert.throws(()=>call('payment',{date:'2026-10-02',invoiceId:1,amountCents:6001,requestId:'bad-payment'}));
+assert.throws(()=>call('invoice',{date:'2026-10-01',contactId:1,description:'Bad fractional cents',amountCents:1.1,requestId:'bad-invoice'}));
+assert.throws(()=>call('__import__'));
+assert.equal(call('snapshot').invoices.length,1);
+// Persistence Round-trip: Reopen the bytes exported from the actual WASM SQLite filesystem.
+const bytes = py.FS.readFile('/ledger.sqlite');
+await mkdir(new URL('../.tools/',import.meta.url),{recursive:true});
+await writeFile(new URL('../.tools/ledger-test.sqlite',import.meta.url),bytes);
+py.runPython("book.close()\nfrom ledger import Ledger\nimport ledger_bridge\nledger_bridge.book = Ledger('/ledger.sqlite')");
+assert.equal(call('snapshot').invoices[0].outstandingCents,6000);
+console.log('Pyodide ledger: invoice, partial payment, balanced reports, validation, and SQLite reopen passed.');

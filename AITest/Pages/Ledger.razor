@@ -1,0 +1,148 @@
+@page "/ledger"
+@implements IAsyncDisposable
+@inject IJSRuntime JS
+
+<PageTitle>AICraft · Ledger Reborn</PageTitle>
+<h1>Ledger Reborn</h1>
+<p class="lead">A small accounting workflow, running entirely in your browser.</p>
+<p>Try synthetic data first. This lab supports service invoices, payments into Bank, and accrual reports. No tax, payroll, inventory, or bank connection is included.</p>
+<p>Changes are saved in this browser on this device. Clearing site data removes them. Download backups to keep a separate copy. The first launch downloads the pinned Python runtime from jsDelivr; ledger data is not uploaded.</p>
+@if (error is not null) { <div class="alert alert-danger" role="alert">@error</div> }
+<p role="status" aria-live="polite">@status</p>
+<button class="btn btn-outline-secondary mb-3" disabled="@busy" @onclick="Start">Open / reopen ledger</button>
+<fieldset disabled="@(!ready || busy)" aria-busy="@busy.ToString().ToLowerInvariant()">
+    <legend class="visually-hidden">Ledger workflow</legend>
+    <div class="ledger-grid">
+        <section class="ledger-card">
+            <h2 class="h4">1. Customer</h2>
+            <label for="customer-name">New customer name</label>
+            <input id="customer-name" class="form-control" maxlength="200" @bind="customerName" @bind:event="oninput" />
+            <button class="btn btn-primary mt-2" @onclick="AddCustomer">Add customer</button>
+            <h2 class="h4 mt-4">2. Invoice</h2>
+            <label for="customer">Customer</label>
+            <select id="customer" class="form-select" @bind="customerId">
+                <option value="0">Select a customer</option>
+                @if (snapshot is not null) { foreach (var customer in snapshot.Contacts) { <option value="@customer.Id">@customer.Name</option> } }
+            </select>
+            <label for="invoice-date">Invoice date</label><input id="invoice-date" class="form-control" type="date" @bind="invoiceDate" />
+            <label for="description">Description</label><input id="description" class="form-control" maxlength="2000" @bind="description" @bind:event="oninput" />
+            <label for="invoice-amount">Invoice amount (USD)</label><input id="invoice-amount" class="form-control" type="number" min="0.01" max="1000000" step="0.01" @bind="invoiceAmount" @bind:event="oninput" />
+            <button class="btn btn-primary mt-2" @onclick="CreateInvoice">Post invoice</button>
+        </section>
+        <section class="ledger-card">
+            <h2 class="h4">3. Payment</h2>
+            <label for="payment-invoice">Invoice</label>
+            <select id="payment-invoice" class="form-select" @bind="invoiceId">
+                <option value="0">Select an unpaid invoice</option>
+                @if (snapshot is not null) { foreach (var invoice in snapshot.Invoices.Where(x => x.OutstandingCents > 0)) { <option value="@invoice.Id">#@invoice.Id · @Money(invoice.OutstandingCents) remaining</option> } }
+            </select>
+            <label for="payment-date">Payment date</label><input id="payment-date" class="form-control" type="date" @bind="paymentDate" />
+            <label for="payment-amount">Payment amount (USD)</label><input id="payment-amount" class="form-control" type="number" min="0.01" max="1000000" step="0.01" @bind="paymentAmount" @bind:event="oninput" />
+            <button class="btn btn-primary mt-2" @onclick="ReceivePayment">Post payment</button>
+            <h2 class="h4 mt-4">4. Reports &amp; backup</h2>
+            <label for="report-date">Report date</label><input id="report-date" class="form-control" type="date" @bind="reportDate" />
+            <button class="btn btn-outline-primary mt-2" @onclick="Refresh">Refresh reports</button>
+            <button class="btn btn-outline-secondary mt-2" @onclick="Backup">Prepare SQLite backup</button>
+            <a @ref="download" class="btn btn-success mt-2" hidden="@(!backupReady || busy)" download>Download backup</a>
+        </section>
+    </div>
+</fieldset>
+@if (snapshot is not null)
+{
+    <h2 class="h4 mt-4">Invoices · current balances</h2>
+    <div class="table-responsive"><table class="table"><thead><tr><th>Invoice</th><th>Date</th><th>Total USD</th><th>Outstanding USD</th></tr></thead><tbody>
+        @foreach (var invoice in snapshot.Invoices) { <tr><td>#@invoice.Id</td><td>@invoice.Date</td><td>@Money(invoice.TotalCents)</td><td>@Money(invoice.OutstandingCents)</td></tr> }
+    </tbody></table></div>
+    <h2 class="h4">Trial balance · @loadedReportDate</h2>
+    <p>Year-to-date accrual profit: <strong>@Money(snapshot.ProfitCents) USD</strong></p>
+    <div class="table-responsive"><table class="table"><thead><tr><th>Account</th><th>Debit USD</th><th>Credit USD</th></tr></thead><tbody>
+        @foreach (var row in snapshot.Rows.Where(x => x.DebitCents != 0 || x.CreditCents != 0)) { <tr><td>@row.Code · @row.Name</td><td>@Money(row.DebitCents)</td><td>@Money(row.CreditCents)</td></tr> }
+    </tbody><tfoot><tr><th>Totals</th><td>@Money(snapshot.Rows.Sum(x => x.DebitCents))</td><td>@Money(snapshot.Rows.Sum(x => x.CreditCents))</td></tr></tfoot></table></div>
+}
+<p class="text-muted mt-4">Powered by the unmodified <a href="https://github.com/lxistired/ledger-reborn">Ledger Reborn</a> Python engine via Pyodide. This is a focused Blazor integration, not the full desktop interface. Backups can be inspected with SQLite tools; restoring backups is not included in this first lab.</p>
+
+@code {
+    private ElementReference download;
+    private IJSObjectReference? module, editor;
+    private bool busy, ready, disposed, backupReady;
+    private string? error;
+    private string status = "Open the ledger to load Python and your saved browser data.";
+    private string customerName = "Walkthrough Customer", description = "Walkthrough service";
+    private int customerId, invoiceId;
+    private decimal invoiceAmount = 100m, paymentAmount = 40m;
+    private DateTime invoiceDate = DateTime.Today, paymentDate = DateTime.Today, reportDate = DateTime.Today;
+    private string loadedReportDate = "";
+    private LedgerSnapshot? snapshot;
+    private static string Money(long cents) => (cents / 100m).ToString("N2", System.Globalization.CultureInfo.GetCultureInfo("en-US"));
+    private static string Date(DateTime date) => date.ToString("yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
+    private static long Cents(decimal amount)
+    {
+        if (amount <= 0 || amount > 1000000m || amount * 100m != decimal.Truncate(amount * 100m))
+            throw new ArgumentException("Enter an amount from 0.01 to 1,000,000 with at most two decimal places.");
+        return (long)(amount * 100m);
+    }
+
+    // Runtime Lifetime: Start only on user request, after Blazor has rendered the download element.
+    private async Task Start()
+    {
+        if (busy || disposed) return;
+        busy = true; ready = backupReady = false; error = null; snapshot = null;
+        status = "Loading Python and SQLite… First launch can take a minute.";
+        try
+        {
+            if (editor is not null) { await editor.InvokeVoidAsync("dispose"); await editor.DisposeAsync(); editor = null; }
+            module ??= await JS.InvokeAsync<IJSObjectReference>("import", "./js/ledger-editor.js");
+            if (disposed) { await module.DisposeAsync(); return; }
+            editor = await module.InvokeAsync<IJSObjectReference>("create", download);
+            if (disposed) { await editor.InvokeVoidAsync("dispose"); await editor.DisposeAsync(); return; }
+            await Load("snapshot", new { });
+            ready = true;
+        }
+        catch (JSException ex) { error = ex.Message.Split('\n')[0]; status = "Ledger unavailable. Reopen to retry."; }
+        finally { busy = false; }
+    }
+    private async Task Load(string action, object args)
+    {
+        snapshot = await editor!.InvokeAsync<LedgerSnapshot>("execute", action, args, Date(reportDate));
+        loadedReportDate = Date(reportDate);
+        if (!snapshot.Contacts.Any(x => x.Id == customerId)) customerId = snapshot.Contacts.LastOrDefault()?.Id ?? 0;
+        if (!snapshot.Invoices.Any(x => x.Id == invoiceId && x.OutstandingCents > 0)) invoiceId = snapshot.Invoices.FirstOrDefault(x => x.OutstandingCents > 0)?.Id ?? 0;
+        status = "Saved in this browser. Reports refreshed.";
+    }
+    private async Task Run(string action, Func<object> args)
+    {
+        if (busy || !ready || editor is null) return;
+        busy = true; backupReady = false; error = null;
+        try { await Load(action, args()); }
+        catch (Exception ex) when (ex is JSException or ArgumentException) { error = ex.Message.Split('\n')[0]; status = "Operation did not complete. Check the error before retrying."; }
+        finally { busy = false; }
+    }
+    private Task AddCustomer() => Run("contact", () => new { name = customerName });
+    private Task CreateInvoice() => Run("invoice", () => new { contactId = customerId, date = Date(invoiceDate), description, amountCents = Cents(invoiceAmount), requestId = Guid.NewGuid().ToString() });
+    private Task ReceivePayment() => Run("payment", () => new { invoiceId, date = Date(paymentDate), amountCents = Cents(paymentAmount), requestId = Guid.NewGuid().ToString() });
+    private Task Refresh() => Run("snapshot", () => new { });
+    private async Task Backup()
+    {
+        if (busy || !ready || editor is null) return;
+        busy = true; backupReady = false; error = null;
+        try { await editor.InvokeVoidAsync("backup"); backupReady = true; status = "Backup ready to download."; }
+        catch (JSException ex) { error = ex.Message.Split('\n')[0]; }
+        finally { busy = false; }
+    }
+    public async ValueTask DisposeAsync()
+    {
+        disposed = true;
+        if (editor is not null) { await editor.InvokeVoidAsync("dispose"); await editor.DisposeAsync(); }
+        if (module is not null) await module.DisposeAsync();
+    }
+    public sealed class LedgerSnapshot
+    {
+        public List<Customer> Contacts { get; set; } = [];
+        public List<Invoice> Invoices { get; set; } = [];
+        public List<BalanceRow> Rows { get; set; } = [];
+        public long ProfitCents { get; set; }
+    }
+    public sealed class Customer { public int Id { get; set; } public string Name { get; set; } = ""; }
+    public sealed class Invoice { public int Id { get; set; } public string Date { get; set; } = ""; public long TotalCents { get; set; } public long OutstandingCents { get; set; } }
+    public sealed class BalanceRow { public string Code { get; set; } = ""; public string Name { get; set; } = ""; public long DebitCents { get; set; } public long CreditCents { get; set; } }
+}

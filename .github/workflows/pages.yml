@@ -45,6 +45,10 @@ jobs:
         with:
           name: pdf-test-output
           path: .tools/pdf-export-test.pdf
+      - name: Test Python through Pyodide
+        run: |
+          npm install --prefix .tools/pyodide pyodide@314.0.7 --no-audit --no-fund
+          node scripts/test-ledger-pyodide.mjs
       - name: Collect dependency licenses
         run: python3 scripts/collect-licenses.py
       - name: Publish Blazor

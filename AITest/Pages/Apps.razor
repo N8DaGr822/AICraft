@@ -1,0 +1,13 @@
+@page "/apps"
+<PageTitle>AICraft · Apps</PageTitle>
+<h1>AICraft apps</h1>
+<p class="lead">Choose a workflow. Each engine loads when you open its lab.</p>
+<div class="row g-3">
+    @foreach (var app in AITest.Apps.AppCatalog.All)
+    {
+        <div class="col-md-6"><section class="card h-100"><div class="card-body">
+            <h2 class="h4">@app.Name</h2><p>@app.Description</p><p class="text-muted">@app.Runtime</p>
+            <a class="btn btn-primary" href="@app.Route">Open @app.Name</a>
+        </div></section></div>
+    }
+</div>
