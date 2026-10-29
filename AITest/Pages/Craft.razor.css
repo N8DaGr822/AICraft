@@ -1,0 +1,4 @@
+.craft-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 1rem; margin: 1rem 0; }
+.craft-actions .btn { min-height: 44px; }
+.craft-editor { width: 100%; height: max(600px, 78vh); border: 1px solid #dbe3e9; border-radius: 8px; display: block; background: #202124; }
+@media (max-width: 640px) { .craft-editor { height: 75vh; min-height: 420px; } }

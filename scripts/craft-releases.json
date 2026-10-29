@@ -1,0 +1,72 @@
+[
+  {
+    "id": "wordcraft",
+    "version": "0.12.0",
+    "url": "https://github.com/storytold/wordcraft/releases/download/v0.12.0/wordcraft-web-0.12.0.zip",
+    "sha256": "4cf6808b762e6d1211a569dd0cac831b7f1e7eb1a41f70cae90bceeb2c6a6acf",
+    "size": 18599981
+  },
+  {
+    "id": "gridcraft",
+    "version": "0.13.0",
+    "url": "https://github.com/storytold/gridcraft/releases/download/v0.13.0/gridcraft-web-0.13.0.zip",
+    "sha256": "e232edde1898459f13568ca7b1f3feecb4037f0cbb8f6aec86de1a3c096af5dc",
+    "size": 7974995
+  },
+  {
+    "id": "deckcraft",
+    "version": "0.12.0",
+    "url": "https://github.com/storytold/deckcraft/releases/download/v0.12.0/deckcraft-web-0.12.0.zip",
+    "sha256": "4625fc2b66f0a0065b1cd549d94dd51f4e0f4f6082638d399c530ffdc56ebab5",
+    "size": 11522095
+  },
+  {
+    "id": "soundcraft",
+    "version": "0.14.0",
+    "url": "https://github.com/storytold/soundcraft/releases/download/v0.14.0/soundcraft-web-0.14.0.zip",
+    "sha256": "76290a220377d80aa62a3a196c8bcc8b28e01eaf5b0aad912fabf7eb5a9a767d",
+    "size": 6741547
+  },
+  {
+    "id": "filmcraft",
+    "version": "0.14.0",
+    "url": "https://github.com/storytold/filmcraft/releases/download/v0.14.0/filmcraft-web-0.14.0.zip",
+    "sha256": "58140e222600c3fbb8ab5fdb94b95abf31cf13d2ad057182b7a6b64843a7a330",
+    "size": 14300479
+  },
+  {
+    "id": "lightcraft",
+    "version": "0.15.0",
+    "url": "https://github.com/storytold/lightcraft/releases/download/v0.15.0/lightcraft-web-0.15.0.zip",
+    "sha256": "fb46de80ad77814ea33efa3d2799edbaca3462c96da88347fb874f4d6fd15564",
+    "size": 72556863
+  },
+  {
+    "id": "effectcraft",
+    "version": "0.18.0",
+    "url": "https://github.com/storytold/effectcraft/releases/download/v0.18.0/effectcraft-web-0.18.0.zip",
+    "sha256": "cc3326670a37a62499b132d20773016d20f576714aaf6b4946744ae6876fa2aa",
+    "size": 20687568
+  },
+  {
+    "id": "designcraft",
+    "version": "0.14.0",
+    "url": "https://github.com/storytold/designcraft/releases/download/v0.14.0/designcraft-web-0.14.0.zip",
+    "sha256": "7d7e5f24d49b07be6c21d9b571f7edd3763bc9f9dd72a9a1dcc61ebd63bcc6bb",
+    "size": 26346214
+  },
+  {
+    "id": "cadcraft",
+    "version": "0.14.0",
+    "url": "https://github.com/storytold/cadcraft/releases/download/v0.14.0/cadcraft-web-0.14.0.zip",
+    "sha256": "f2fbfb80388dc0315a469d65cf7c966b742f86b6b4d3d405752bdee7428d94e8",
+    "size": 10278462
+  },
+  {
+    "id": "figcraft",
+    "version": "0.12.1",
+    "url": "https://github.com/storytold/figcraft/releases/download/v0.12.1/figcraft-web-0.12.1.zip",
+    "sha256": "8f52f52d4897d35b14c2a347c44ab6362b60b93d6a2f54a17d218111b9006c37",
+    "size": 9913496
+  }
+]

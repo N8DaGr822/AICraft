@@ -87,3 +87,15 @@ The Pyodide test exercises a $100 invoice / $40 payment / $60 remaining balance,
 npm install --prefix .tools/pyodide pyodide@314.0.7 --no-audit --no-fund
 node scripts/test-ledger-pyodide.mjs
 ```
+
+## Remaining Craft browser apps
+
+The launcher now registers WordCraft, GridCraft, DeckCraft, SoundCraft, FilmCraft, LightCraft, EffectCraft, DesignCraft, CADCraft, and FigCraft. `/craft/{app}` provides a short workflow guide, an explicit Launch button, and an optional full-page editor. These are the official upstream WASM interfaces hosted inside Blazor, not reimplementations or claims of desktop parity. Existing photo/PDF/vector labs and Ledger remain unchanged.
+
+`python scripts/install-craft-apps.py` installs the pinned releases into the ignored `AITest/wwwroot/craft` directory for development. CI installs into `publish/wwwroot/craft` after Blazor publishing, avoiding .NET repackaging of upstream bundles. `scripts/craft-releases.json` records version, download size, and SHA-256 from GitHub release asset metadata. Each download must match before extraction. The installer rejects traversal and symlinks, bounds unpacked size, and requires WASM plus upstream license/hosting notices. Bundles are about 450 MB total unpacked and stay out of Git. Only the app you launch downloads to your browser.
+
+Versioned asset directories preserve relative paths, integrity metadata, worker/service-worker scope, and license files. Optional .br/.gz sidecars are omitted so the host controls HTTP compression; uncompressed assets remain unchanged. Updating an app requires changing its manifest pin and catalog version together; CI checks this. The common host resets launch state when its route changes, and removes the iframe on Close or navigation. No arbitrary URL can be embedded through the route.
+
+Save/export within each app before leaving it; persistence is upstream-specific and browser-local. Embedded apps share this site's origin and are not a security boundary. No collaboration backend is deployed. EffectCraft, DesignCraft, and CADCraft failed graphics startup in the verification environment and are labeled experimental in their hosts; their workflows are not yet verified. No ineffective compatibility patches are applied. GPU, codec, clipboard, microphone, and storage support depend on the browser; camera/microphone permission is never granted automatically. Mobile layouts are supported by the host, but the upstream editors can need landscape/full-page space and have not been verified on physical phones. First load can be large, especially LightCraft. Full desktop feature parity is outside the scope of these labs.
+
+Run `python scripts/test-craft-bundles.py` to check tamper rejection, archive traversal rejection, license retention, and catalog/version consistency.

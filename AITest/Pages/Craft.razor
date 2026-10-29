@@ -1,0 +1,47 @@
+@page "/craft/{AppId}"
+
+<PageTitle>AICraft · @(app?.Name ?? "App not found")</PageTitle>
+@if (app is null)
+{
+    <h1>App not found</h1><p><a href="apps">Return to all apps</a>.</p>
+}
+else
+{
+    <h1>@app.Name</h1>
+    <p>@app.Description</p>
+    <p>Start here: @app.Workflow</p>
+    <p class="text-muted">Official browser build @app.Version. Files and browser storage are managed by this app. Save or export your work before closing or switching apps. Desktop-only features may be unavailable. On a phone, landscape or the full-page view gives the editor more room.</p>
+    @if (AppId is "effectcraft" or "designcraft" or "cadcraft")
+    {
+        <p class="alert alert-warning" role="status">Experimental: this editor failed graphics startup during our browser checks. It is available for compatibility testing, but a working workflow has not yet been verified.</p>
+    }
+    <div class="craft-actions">
+        @if (!started) { <button class="btn btn-primary" @onclick="() => started = true">Launch @app.Name</button> }
+        else { <button class="btn btn-outline-secondary" @onclick="() => started = false">Close editor</button> }
+        <a class="btn btn-outline-primary" href="@BundleUrl">Open full-page editor</a>
+        <a href="@($"https://github.com/storytold/{AppId}/releases/tag/v{app.Version}")">Release notes</a>
+        <a href="@($"craft/{AppId}/{app.Version}/NOTICE")">Licenses &amp; notices</a>
+    </div>
+    @if (started)
+    {
+        @* Runtime Ownership: Removing the frame on close/navigation releases that app's WASM instance. *@
+        <iframe @key="AppId" class="craft-editor" src="@BundleUrl" title="@($"{app.Name} browser editor")"
+                allow="fullscreen; clipboard-read; clipboard-write; microphone" allowfullscreen></iframe>
+        <p class="text-muted">The editor may take a moment to load. If it cannot start, try the full-page view and check your browser's WebGL/WebGPU support.</p>
+    }
+}
+
+@code {
+    [Parameter] public string AppId { get; set; } = "";
+    private AITest.Apps.AppCatalog.Entry? app;
+    private bool started;
+    private string? previousId;
+    private string BundleUrl => $"craft/{AppId}/{app!.Version}/index.html";
+
+    // Route Lifecycle: Changing apps must not carry the previous frame or launch state forward.
+    protected override void OnParametersSet()
+    {
+        app = AITest.Apps.AppCatalog.All.FirstOrDefault(x => x.Route == $"craft/{AppId}" && x.Version is not null);
+        if (previousId != AppId) { started = false; previousId = AppId; }
+    }
+}
