@@ -1,0 +1,8 @@
+**/bin/
+**/obj/
+.tools/
+rust/target/
+AITest/wwwroot/wasm/
+publish/
+.vs/
+AITest/wwwroot/licenses/dependencies/

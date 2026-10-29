@@ -1,0 +1,135 @@
+@page "/"
+@implements IAsyncDisposable
+@inject IJSRuntime JS
+
+<PageTitle>AICraft · Photo lab</PageTitle>
+
+<h1>Photo lab</h1>
+<p class="lead">Make a little room for experimentation.</p>
+<p>Adjust a photo, compare the result, and save a PNG. Your photos stay on this device.</p>
+
+@if (error is not null)
+{
+    <div class="alert alert-danger" role="alert">@error</div>
+}
+<p role="status" aria-live="polite">@status</p>
+
+<div class="photo-lab" aria-busy="@busy.ToString().ToLowerInvariant()">
+    <section class="photo-controls" aria-label="Photo adjustments">
+        <label for="photo-file">Choose a photo</label>
+        <input id="photo-file" type="file" accept="image/jpeg,image/png,image/webp" @ref="fileInput"
+               @onchange="LoadPhoto" disabled="@(!ready || busy)" class="form-control" />
+        <small>JPEG, PNG, or WebP · up to 20 MB. Large photos are resized to at most 4 MP and 2560 pixels per side.</small>
+        <fieldset disabled="@(!loaded || busy)">
+            <legend class="visually-hidden">Adjustments</legend>
+            <label for="exposure">Exposure <output>@exposure.ToString("0.0") EV</output></label>
+            <input id="exposure" type="range" min="-3" max="3" step="0.1" @bind="exposure" class="form-range" />
+            <label for="saturation">Saturation <output>@saturation.ToString("0.0")×</output></label>
+            <input id="saturation" type="range" min="0" max="2" step="0.1" @bind="saturation" class="form-range" />
+            <label for="hue">Hue <output>@hue°</output></label>
+            <input id="hue" type="range" min="-180" max="180" step="1" @bind="hue" class="form-range" />
+            <label class="grayscale"><input type="checkbox" @bind="grayscale" /> Grayscale</label>
+            <div class="photo-actions">
+                <button class="btn btn-primary" @onclick="Apply">Apply adjustments</button>
+                <button class="btn btn-outline-secondary" @onclick="Reset">Reset</button>
+            </div>
+        </fieldset>
+        <a @ref="download" class="btn btn-success" hidden="@(!loaded || busy || !exportReady)" download>Download PNG</a>
+        <small>The download matches the last applied preview. Exports omit the original metadata.</small>
+    </section>
+    <section class="photo-previews" aria-label="Photo comparison">
+        <figure><figcaption>Original working copy</figcaption><canvas @ref="before" width="1" height="1" aria-label="Original photo"></canvas></figure>
+        <figure><figcaption>Edited</figcaption><canvas @ref="after" width="1" height="1" aria-label="Edited photo"></canvas></figure>
+        @if (!loaded)
+        {
+            <p class="empty-state">Choose a photo to begin. Try a portrait, a landscape, or a picture from your phone.</p>
+        }
+    </section>
+</div>
+<p class="photo-credit">Powered by <a href="https://github.com/storytold/photocraft">PhotoCraft</a> color functions, running as Rust WebAssembly. PDF and vector experiments are planned next.</p>
+
+@code {
+    private ElementReference fileInput, before, after, download;
+    private IJSObjectReference? module;
+    private IJSObjectReference? editor;
+    private bool ready, loaded, busy, exportReady, disposed;
+    private double exposure, hue;
+    private double saturation = 1;
+    private bool grayscale;
+    private string status = "Loading the photo engine…";
+    private string? error;
+
+    // Blazor Lifecycle: Canvas and input references are valid only after the first render.
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender) return;
+        try
+        {
+            module = await JS.InvokeAsync<IJSObjectReference>("import", "./js/photo-editor.js");
+            if (disposed) { await module.DisposeAsync(); return; }
+            editor = await module.InvokeAsync<IJSObjectReference>("create", fileInput, before, after, download);
+            if (disposed) { await editor.InvokeVoidAsync("dispose"); await editor.DisposeAsync(); return; }
+            ready = true;
+            status = "Ready. Choose a photo to start.";
+        }
+        catch (JSException)
+        {
+            error = "The photo engine could not load. Check your connection and reload the page.";
+            status = "Photo engine unavailable.";
+        }
+        if (!disposed) StateHasChanged();
+    }
+
+    private async Task LoadPhoto()
+    {
+        if (busy || editor is null) return;
+        busy = true;
+        loaded = exportReady = false;
+        error = null;
+        try
+        {
+            status = await editor.InvokeAsync<string>("load");
+            exposure = hue = 0;
+            saturation = 1;
+            grayscale = false;
+            loaded = exportReady = true;
+        }
+        catch (JSException ex) { error = ex.Message; status = "Photo could not be opened."; }
+        finally { busy = false; }
+    }
+
+    private async Task Apply()
+    {
+        if (busy || !loaded || editor is null) return;
+        busy = true;
+        exportReady = false;
+        error = null;
+        try
+        {
+            await editor.InvokeVoidAsync("edit", exposure, saturation, hue, grayscale);
+            exportReady = true;
+        }
+        catch (JSException ex) { error = ex.Message; }
+        finally { busy = false; }
+    }
+
+    private async Task Reset()
+    {
+        exposure = hue = 0;
+        saturation = 1;
+        grayscale = false;
+        await Apply();
+    }
+
+    // Component Ownership: Release the worker, pixel buffers, and download URL on navigation.
+    public async ValueTask DisposeAsync()
+    {
+        disposed = true;
+        if (editor is not null)
+        {
+            await editor.InvokeVoidAsync("dispose");
+            await editor.DisposeAsync();
+        }
+        if (module is not null) await module.DisposeAsync();
+    }
+}

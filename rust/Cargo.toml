@@ -1,0 +1,16 @@
+[package]
+name = "aicraft-photo"
+version = "0.1.0"
+edition = "2024"
+publish = false
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+wasm-bindgen = "=0.2.104"
+photocraft-color = { git = "https://github.com/storytold/photocraft", rev = "c645d5fcc92c4bdd0d925084450699d05a184850" }
+
+[profile.release]
+lto = true
+opt-level = "s"

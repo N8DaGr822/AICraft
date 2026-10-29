@@ -1,0 +1,39 @@
+# AICraft
+
+A mobile-friendly Blazor WebAssembly photo lab for trying Storytold Rust functionality in reusable Razor UI. Hosted on GitHub Pages at https://N8DaGr822.github.io/AICraft/ after deployment.
+
+## First workflow
+
+Choose a JPEG, PNG, or WebP; adjust exposure, saturation, hue, or grayscale; compare the original working copy with the edited output; download a PNG. Files remain in the browser. Each Apply processes the original working copy, so adjustments do not accumulate. Reset restores the original pixels.
+
+For mobile memory limits, input files are limited to 20 MB and working copies to four megapixels / 2560 pixels per side. PNG exports use those working dimensions and do not preserve EXIF, original ICC profiles, or other source metadata. This is an 8-bit browser-decoded sRGB experiment, not the full PhotoCraft editor. Very large compressed images can still exceed a mobile browser's decode memory. PDF and vector tools are next priorities, not implemented features.
+
+## Integration
+
+`Home.razor` owns the controls and component lifetime. `photo-editor.js` owns file decoding, canvases, downloads, and one module worker. `photo-worker.js` calls the Rust WebAssembly module. Pixel buffers stay in JavaScript/Rust rather than crossing the .NET boundary. The Rust wrapper uses PhotoCraft's actual sRGB, HSB, and grayscale conversions, with our own operation sequencing and validation.
+
+PhotoCraft is pinned to commit `c645d5fcc92c4bdd0d925084450699d05a184850`; Cargo.lock pins transitive dependencies. No upstream sources are modified.
+
+## Build locally
+
+Prerequisites: .NET 10 SDK, Rust 1.95.0, wasm32-unknown-unknown target, Node.js 22+ and Python 3. On Windows, Rust's MSVC host also requires Visual Studio C++ Build Tools (for dependency build scripts).
+
+```sh
+rustup toolchain install 1.95.0 --profile minimal --target wasm32-unknown-unknown
+cargo +1.95.0 install wasm-bindgen-cli --version 0.2.104 --locked
+cargo +1.95.0 test --locked --manifest-path rust/Cargo.toml
+cargo +1.95.0 build --locked --manifest-path rust/Cargo.toml --release --target wasm32-unknown-unknown
+wasm-bindgen rust/target/wasm32-unknown-unknown/release/aicraft_photo.wasm --target web --out-dir AITest/wwwroot/wasm --out-name aicraft_photo
+node scripts/test-wasm.mjs
+dotnet run --project AITest/AITest.csproj
+```
+
+The generated wasm directory must exist before `dotnet publish`. It is intentionally ignored in source control. No JavaScript fallback substitutes for a missing Rust module.
+
+## GitHub Pages
+
+In repository Settings > Pages, select **GitHub Actions** as the source. Push to `main` to build, test, and deploy. The workflow publishes under `/AICraft/`; update that base path if the repository name changes. The generated 404.html permits client-side routes to load on direct navigation, though GitHub returns HTTP 404 for those URLs.
+
+## Attribution
+
+PhotoCraft and its photocraft-color / photocraft-cms crates are copyright ArtCraft Team and contributors, licensed MIT OR Apache-2.0. See `THIRD-PARTY-NOTICES.md` and the license copies in `AITest/wwwroot/licenses/`. Bootstrap retains its MIT license header in the distributed stylesheet.
