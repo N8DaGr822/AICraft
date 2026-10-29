@@ -21,7 +21,7 @@
         <fieldset disabled="@(info is null || busy)">
             <legend class="visually-hidden">Export options</legend>
             <label for="pdf-pages">Pages to export</label>
-            <input id="pdf-pages" class="form-control" @bind="selectedPages" @bind:after="InvalidateExport" placeholder="1-3, 5" aria-describedby="range-help" />
+            <input id="pdf-pages" class="form-control" @bind="selectedPages" @bind:event="oninput" @bind:after="InvalidateExport" placeholder="1-3, 5" aria-describedby="range-help" />
             <small id="range-help">Use ranges or a list, such as 1-3, 5. Use 3, 1-2 to reorder. Each page can appear once.</small>
             <label for="pdf-rotation">Rotate exported pages</label>
             <select id="pdf-rotation" class="form-select" @bind="rotation" @bind:after="InvalidateExport">
@@ -111,7 +111,7 @@
             ready = true;
             status = "Ready. Choose a PDF or try the sample.";
         }
-        catch (JSException ex) { error = ex.Message; status = "PDF engine unavailable. Use Restart PDF lab to retry."; }
+        catch (JSException ex) { error = ex.Message.Split('\n')[0]; status = "PDF engine unavailable. Use Restart PDF lab to retry."; }
         finally { busy = false; }
     }
 
@@ -133,7 +133,7 @@
             rotation = 0;
             status = $"Opened {info.Filename}: {info.Count} pages.";
         }
-        catch (JSException ex) { error = ex.Message; status = "PDF could not be opened."; }
+        catch (JSException ex) { error = ex.Message.Split('\n')[0]; status = "PDF could not be opened."; }
         finally { busy = false; }
     }
 
@@ -156,7 +156,7 @@
             exportReady = true;
             status = $"PDF ready: {bytes / 1024d:0.#} KB. Download or open it to review.";
         }
-        catch (JSException ex) { error = ex.Message; status = "PDF could not be created. Check your page selection."; }
+        catch (JSException ex) { error = ex.Message.Split('\n')[0]; status = "PDF could not be created. Check your page selection."; }
         finally { busy = false; }
     }
 
