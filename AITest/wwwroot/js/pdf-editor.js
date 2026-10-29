@@ -1,4 +1,5 @@
 export async function create(input, download, preview) {
+    input.value = '';
     const worker = new Worker(new URL('./pdf-worker.js', import.meta.url), { type: 'module' });
     const pending = new Map();
     let sequence = 0;
@@ -52,6 +53,7 @@ export async function create(input, download, preview) {
             clearOutput();
             let file;
             if (sample) {
+                input.value = ''; 
                 const response = await fetch(new URL('../sample-data/pdf-lab-sample.pdf', import.meta.url));
                 if (!response.ok) throw new Error('The sample PDF could not be loaded.');
                 file = new File([await response.blob()], 'aicraft-sample.pdf', { type: 'application/pdf' });
