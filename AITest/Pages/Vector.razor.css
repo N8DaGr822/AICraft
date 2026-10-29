@@ -1,0 +1,19 @@
+.vector-lab { display: grid; grid-template-columns: minmax(240px, 310px) minmax(0, 1fr); gap: 2rem; margin: 1.5rem 0; }
+.vector-controls { padding: 1.25rem; background: #f2f5f8; border: 1px solid #dbe3e9; border-radius: 12px; }
+.vector-controls label { display: flex; justify-content: space-between; gap: .5rem; font-weight: 600; margin: .75rem 0 .25rem; }
+.vector-controls output { font-weight: 400; }
+.vector-controls input[type=range], .vector-controls select, .vector-controls .btn { min-height: 44px; }
+.vector-controls input[type=color] { width: 100%; height: 44px; }
+.color-row { display: flex; gap: 1rem; }
+.color-row > div { flex: 1; }
+.vector-controls .fill-toggle { justify-content: flex-start; align-items: center; min-height: 44px; }
+.vector-actions { display: flex; flex-wrap: wrap; gap: .75rem; margin: 1rem 0; }
+.vector-result { min-width: 0; }
+.artboard { display: grid; place-items: center; min-height: 320px; padding: 2rem; border: 1px solid #dbe3e9; border-radius: 12px; background: repeating-conic-gradient(#e4e8ec 0% 25%, #f8fafc 0% 50%) 50% / 20px 20px; }
+.artboard img { max-width: 100%; max-height: 480px; height: auto; }
+.artboard img[hidden] { display: none; }
+.artboard p { padding: 1rem; background: #f8fafc; border-radius: 8px; }
+.vector-result pre { white-space: pre-wrap; overflow-wrap: anywhere; max-height: 260px; overflow: auto; background: #f2f5f8; padding: 1rem; }
+.vector-note, .vector-controls small { color: #52616c; font-size: .9rem; }
+.vector-result > p { margin-top: 1rem; }
+@media (max-width: 1000px) { .vector-lab { grid-template-columns: 1fr; } }

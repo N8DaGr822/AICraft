@@ -4,14 +4,14 @@ from pathlib import Path
 import subprocess
 
 packages = []
-for manifest in ['rust/Cargo.toml', 'rust-pdf/Cargo.toml']:
+for manifest in ['rust/Cargo.toml', 'rust-pdf/Cargo.toml', 'rust-vector/Cargo.toml']:
     metadata = json.loads(subprocess.check_output(['cargo', '+1.95.0', 'metadata', '--locked', '--manifest-path', manifest, '--format-version', '1'], text=True))
     packages.extend(metadata['packages'])
 output = Path('AITest/wwwroot/licenses/dependencies')
 output.mkdir(parents=True, exist_ok=True)
 index = []
 for package in packages:
-    if package['name'] in ['aicraft-photo', 'aicraft-pdf']:
+    if package['name'] in ['aicraft-photo', 'aicraft-pdf', 'aicraft-vector']:
         continue
     root = Path(package['manifest_path']).parent
     files = [p for p in root.iterdir() if p.is_file() and p.name.upper().startswith(('LICENSE', 'COPYING', 'NOTICE'))]
@@ -20,6 +20,9 @@ for package in packages:
         continue
     if not files and package['name'].startswith('pdfcraft-'):
         index.append(f"{package['name']} {package['version']}: see ../PdfCraft-LICENSE-MIT.txt")
+        continue
+    if not files and package['name'].startswith('vectorcraft-'):
+        index.append(f"{package['name']} {package['version']}: see ../VectorCraft-LICENSE-MIT.txt")
         continue
     if not files:
         raise RuntimeError(f"Missing license text for {package['name']}; inspect before distributing.")

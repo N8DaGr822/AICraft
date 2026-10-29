@@ -8,3 +8,5 @@ publish/
 AITest/wwwroot/licenses/dependencies/
 rust-pdf/target/
 AITest/wwwroot/wasm-pdf/
+rust-vector/target/
+AITest/wwwroot/wasm-vector/

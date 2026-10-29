@@ -22,21 +22,25 @@ jobs:
           node-version: '22'
       - name: Install Rust
         run: rustup toolchain install 1.95.0 --profile minimal --target wasm32-unknown-unknown
-      - name: Test Rust photo and PDF processing
+      - name: Test Rust photo, PDF, and vector processing
         run: |
           cargo +1.95.0 test --locked --manifest-path rust/Cargo.toml
           cargo +1.95.0 test --locked --manifest-path rust-pdf/Cargo.toml
+          cargo +1.95.0 test --locked --manifest-path rust-vector/Cargo.toml
       - name: Build Rust WebAssembly
         run: |
           cargo +1.95.0 build --locked --manifest-path rust/Cargo.toml --release --target wasm32-unknown-unknown
           cargo +1.95.0 build --locked --manifest-path rust-pdf/Cargo.toml --release --target wasm32-unknown-unknown
+          cargo +1.95.0 build --locked --manifest-path rust-vector/Cargo.toml --release --target wasm32-unknown-unknown
           cargo +1.95.0 install wasm-bindgen-cli --version 0.2.104 --locked
           wasm-bindgen rust/target/wasm32-unknown-unknown/release/aicraft_photo.wasm --target web --out-dir AITest/wwwroot/wasm --out-name aicraft_photo
           wasm-bindgen rust-pdf/target/wasm32-unknown-unknown/release/aicraft_pdf.wasm --target web --out-dir AITest/wwwroot/wasm-pdf --out-name aicraft_pdf
+          wasm-bindgen rust-vector/target/wasm32-unknown-unknown/release/aicraft_vector.wasm --target web --out-dir AITest/wwwroot/wasm-vector --out-name aicraft_vector
       - name: Test compiled WebAssembly
         run: |
           node scripts/test-wasm.mjs
           node scripts/test-pdf-wasm.mjs
+          node scripts/test-vector-wasm.mjs
       - uses: actions/upload-artifact@v4
         with:
           name: pdf-test-output

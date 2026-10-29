@@ -1,0 +1,18 @@
+[package]
+name = "aicraft-vector"
+version = "0.1.0"
+edition = "2024"
+publish = false
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+wasm-bindgen = "=0.2.104"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+vectorcraft-geom = { git = "https://github.com/storytold/vectorcraft", rev = "98830e5dda1d89f94acfa56bd4eaa728a11a856d" }
+
+[profile.release]
+lto = true
+opt-level = "s"

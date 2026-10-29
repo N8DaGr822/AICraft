@@ -1,0 +1,176 @@
+@page "/vector"
+@implements IAsyncDisposable
+@inject IJSRuntime JS
+
+<PageTitle>AICraft · Vector lab</PageTitle>
+<h1>Vector lab</h1>
+<p class="lead">Start with a shape. Make it yours.</p>
+<p>Create scalable artwork with VectorCraft geometry, then download an SVG for your next workflow.</p>
+@if (error is not null) { <div class="alert alert-danger" role="alert">@error</div> }
+<p role="status" aria-live="polite">@status</p>
+<div class="vector-lab" aria-busy="@busy.ToString().ToLowerInvariant()">
+    <section class="vector-controls" aria-label="Shape controls">
+        <fieldset disabled="@(!ready || busy)">
+            <legend class="visually-hidden">Shape settings</legend>
+            <label for="vector-shape">Shape</label>
+            <select id="vector-shape" class="form-select" @bind="settings.Shape" @bind:after="Invalidate">
+                <option value="rectangle">Rectangle</option><option value="rounded">Rounded rectangle</option>
+                <option value="ellipse">Ellipse</option><option value="polygon">Polygon</option><option value="star">Star</option>
+            </select>
+            <label for="vector-width">Width <output>@settings.Width</output></label>
+            <input id="vector-width" type="range" min="10" max="1000" step="10" class="form-range" @bind="settings.Width" @bind:event="oninput" @bind:after="Invalidate" />
+            <label for="vector-height">Height <output>@settings.Height</output></label>
+            <input id="vector-height" type="range" min="10" max="1000" step="10" class="form-range" @bind="settings.Height" @bind:event="oninput" @bind:after="Invalidate" />
+            @if (settings.Shape == "rounded")
+            {
+                <label for="vector-radius">Corner radius <output>@settings.Radius</output></label>
+                <input id="vector-radius" type="range" min="0" max="500" class="form-range" @bind="settings.Radius" @bind:event="oninput" @bind:after="Invalidate" />
+                <small>Radius is capped at half the shorter side.</small>
+            }
+            @if (settings.Shape is "star" or "polygon")
+            {
+                <label for="vector-sides">Sides / star points <output>@settings.Sides</output></label>
+                <input id="vector-sides" type="range" min="3" max="32" class="form-range" @bind="settings.Sides" @bind:event="oninput" @bind:after="Invalidate" />
+            }
+            @if (settings.Shape == "star")
+            {
+                <label for="vector-inner">Inner radius ratio <output>@settings.InnerRatio.ToString("0.00")</output></label>
+                <input id="vector-inner" type="range" min="0.1" max="0.9" step="0.05" class="form-range" @bind="settings.InnerRatio" @bind:event="oninput" @bind:after="Invalidate" />
+            }
+            <label for="vector-rotation">Rotation <output>@settings.Rotation°</output></label>
+            <input id="vector-rotation" type="range" min="-180" max="180" class="form-range" @bind="settings.Rotation" @bind:event="oninput" @bind:after="Invalidate" />
+            <div class="color-row">
+                <div><label for="vector-fill">Fill</label><input id="vector-fill" type="color" @bind="settings.Fill" @bind:event="oninput" @bind:after="Invalidate" /></div>
+                <div><label for="vector-stroke">Stroke</label><input id="vector-stroke" type="color" @bind="settings.Stroke" @bind:event="oninput" @bind:after="Invalidate" /></div>
+            </div>
+            <label class="fill-toggle"><input type="checkbox" @bind="settings.Filled" @bind:after="Invalidate" /> Fill shape</label>
+            <label for="vector-stroke-width">Stroke width <output>@settings.StrokeWidth</output></label>
+            <input id="vector-stroke-width" type="range" min="0" max="40" class="form-range" @bind="settings.StrokeWidth" @bind:event="oninput" @bind:after="Invalidate" />
+            <div class="vector-actions">
+                <button class="btn btn-primary" @onclick="Generate">Generate SVG</button>
+                <button class="btn btn-outline-secondary" @onclick="Reset">Reset sample</button>
+            </div>
+        </fieldset>
+        <a @ref="download" class="btn btn-success" hidden="@(!exportReady || busy)" download>Download SVG</a>
+        <button class="btn btn-link" disabled="@busy" @onclick="Start">Restart vector lab</button>
+    </section>
+    <section class="vector-result" aria-label="Generated artwork">
+        <div class="artboard">
+            <img @ref="preview" alt="Generated vector shape" hidden="@(!exportReady)" />
+            @if (!exportReady) { <p>Choose your settings, then generate an SVG.</p> }
+        </div>
+        @if (result is not null)
+        {
+            <p>@result.Width × @result.Height SVG units · @result.AnchorCount anchors · path length @result.Perimeter.ToString("0.#")</p>
+            <details><summary>SVG source</summary><pre>@result.Svg</pre></details>
+        }
+        <p class="vector-note">Transparent background. Export bounds include rotation and stroke padding. Width and height control the unrotated shape; polygons and stars stretch to fit.</p>
+    </section>
+</div>
+<p class="vector-note">Powered by <a href="https://github.com/storytold/vectorcraft">VectorCraft</a> shape generators and transforms. This lab creates individual shapes; SVG import and node editing are not included.</p>
+
+@code {
+    private ElementReference preview, download;
+    private IJSObjectReference? module, editor;
+    private bool ready, busy, exportReady, disposed;
+    private string status = "Loading the vector engine…";
+    private string? error;
+    private ShapeSettings settings = new();
+    private VectorResult? result;
+
+    // Blazor Lifecycle: The image and download references are available after first render.
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender) return;
+        await Start();
+        if (!disposed) StateHasChanged();
+    }
+
+    private async Task Start()
+    {
+        if (busy || disposed) return;
+        busy = true;
+        ready = exportReady = false;
+        result = null;
+        error = null;
+        status = "Loading the vector engine…";
+        try
+        {
+            if (editor is not null) { await editor.InvokeVoidAsync("dispose"); await editor.DisposeAsync(); editor = null; }
+            module ??= await JS.InvokeAsync<IJSObjectReference>("import", "./js/vector-editor.js");
+            if (disposed) { await module.DisposeAsync(); return; }
+            editor = await module.InvokeAsync<IJSObjectReference>("create", preview, download);
+            if (disposed) { await editor.InvokeVoidAsync("dispose"); await editor.DisposeAsync(); return; }
+            ready = true;
+        }
+        catch (JSException ex) { error = ex.Message.Split('\n')[0]; status = "Vector engine unavailable. Use Restart vector lab to retry."; }
+        finally { busy = false; }
+        if (ready && !disposed) await Generate();
+    }
+
+    private async Task Invalidate()
+    {
+        exportReady = false;
+        result = null;
+        error = null;
+        status = "Settings changed. Generate an SVG to preview and download.";
+        if (editor is not null) await editor.InvokeVoidAsync("clearOutput");
+    }
+
+    private async Task Generate()
+    {
+        if (busy || !ready || editor is null) return;
+        busy = true;
+        exportReady = false;
+        result = null;
+        error = null;
+        status = "Generating SVG…";
+        try
+        {
+            result = await editor.InvokeAsync<VectorResult>("generate", settings);
+            exportReady = true;
+            status = "SVG ready. Download it or adjust the shape and generate again.";
+        }
+        catch (JSException ex) { error = ex.Message.Split('\n')[0]; status = "SVG could not be generated."; }
+        finally { busy = false; }
+    }
+
+    private async Task Reset()
+    {
+        if (busy) return;
+        settings = new();
+        await Generate();
+    }
+
+    // Component Ownership: Stop the worker and revoke image/download URLs on navigation.
+    public async ValueTask DisposeAsync()
+    {
+        disposed = true;
+        if (editor is not null) { await editor.InvokeVoidAsync("dispose"); await editor.DisposeAsync(); }
+        if (module is not null) await module.DisposeAsync();
+    }
+
+    public sealed class ShapeSettings
+    {
+        public string Shape { get; set; } = "star";
+        public double Width { get; set; } = 320;
+        public double Height { get; set; } = 300;
+        public double Radius { get; set; } = 30;
+        public int Sides { get; set; } = 5;
+        public double InnerRatio { get; set; } = 0.45;
+        public double Rotation { get; set; }
+        public string Fill { get; set; } = "#6667d9";
+        public string Stroke { get; set; } = "#222653";
+        public double StrokeWidth { get; set; } = 4;
+        public bool Filled { get; set; } = true;
+    }
+
+    public sealed class VectorResult
+    {
+        public string Svg { get; set; } = "";
+        public double Width { get; set; }
+        public double Height { get; set; }
+        public int AnchorCount { get; set; }
+        public double Perimeter { get; set; }
+    }
+}

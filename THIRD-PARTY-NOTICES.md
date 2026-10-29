@@ -7,3 +7,5 @@ The photo bridge depends on photocraft-color and photocraft-cms. Their MIT and A
 Bootstrap is copyright The Bootstrap Authors, licensed MIT; its stylesheet retains the upstream license header.
 
 PdfCraft is used at revision c735fb7da55264e7cd84eed0688ec0cec5e628d4 from https://github.com/storytold/pdfcraft. The pdfcraft-cos, pdfcraft-organize, pdfcraft-content, pdfcraft-filters, and pdfcraft-crypt crates are used under the MIT license; the upstream license texts and NOTICE are distributed in AITest/wwwroot/licenses/PdfCraft-*.txt. The patched Hayro syntax and JBIG2 crates retain their own license files in the generated dependency notices. The PDF module has its own rust-pdf/Cargo.lock.
+
+VectorCraft geometry is used unmodified at revision 98830e5dda1d89f94acfa56bd4eaa728a11a856d from https://github.com/storytold/vectorcraft under the MIT license. Upstream license texts and NOTICE are distributed in AITest/wwwroot/licenses/VectorCraft-*.txt. The vector module has its own rust-vector/Cargo.lock.

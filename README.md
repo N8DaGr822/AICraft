@@ -6,7 +6,7 @@ A mobile-friendly Blazor WebAssembly photo lab for trying Storytold Rust functio
 
 Choose a JPEG, PNG, or WebP; adjust exposure, saturation, hue, or grayscale; compare the original working copy with the edited output; download a PNG. Files remain in the browser. Each Apply processes the original working copy, so adjustments do not accumulate. Reset restores the original pixels.
 
-For mobile memory limits, input files are limited to 20 MB and working copies to four megapixels / 2560 pixels per side. PNG exports use those working dimensions and do not preserve EXIF, original ICC profiles, or other source metadata. This is an 8-bit browser-decoded sRGB experiment, not the full PhotoCraft editor. Very large compressed images can still exceed a mobile browser's decode memory. The PDF lab provides page extraction and rotation; vector tools remain planned.
+For mobile memory limits, input files are limited to 20 MB and working copies to four megapixels / 2560 pixels per side. PNG exports use those working dimensions and do not preserve EXIF, original ICC profiles, or other source metadata. This is an 8-bit browser-decoded sRGB experiment, not the full PhotoCraft editor. Very large compressed images can still exceed a mobile browser's decode memory. The PDF lab provides page extraction and rotation; the vector lab creates and exports SVG shapes.
 
 ## Integration
 
@@ -57,5 +57,18 @@ node scripts/test-pdf-wasm.mjs
 
 The PDF tests exercise page order, content retention, omitted-page removal, rotation, source preservation, and invalid inputs. The workflow retains the exported test PDF as an artifact for independent inspection. The sample fixture can be regenerated with `python scripts/create-pdf-fixture.py`.
 
-Vector tools remain the next priority.
+## Vector lab
+
+The `/vector` page uses VectorCraft's actual geometry generators and transforms, pinned to `98830e5dda1d89f94acfa56bd4eaa728a11a856d`. Create rectangles, rounded rectangles, ellipses, polygons, or stars; adjust dimensions, rotation, fill, and stroke; then download a transparent SVG. The bridge serializes the generated paths into SVG. It does not use the full VectorCraft editor or support SVG import/node editing.
+
+Dimensions are 10–1000 SVG units, polygons/stars support 3–32 points, and export bounds include rotated geometry and stroke padding. Polygons and stars stretch to fit the requested dimensions. Settings changes invalidate the previous download until Generate SVG is selected. The module loads on navigation, runs in a worker with a 30-second deadline, and releases the worker and object URLs when leaving the page. The starter Weather navigation link now opens this lab; its component is retained.
+
+```sh
+cargo +1.95.0 test --locked --manifest-path rust-vector/Cargo.toml
+cargo +1.95.0 build --locked --manifest-path rust-vector/Cargo.toml --release --target wasm32-unknown-unknown
+wasm-bindgen rust-vector/target/wasm32-unknown-unknown/release/aicraft_vector.wasm --target web --out-dir AITest/wwwroot/wasm-vector --out-name aicraft_vector
+node scripts/test-vector-wasm.mjs
+```
+
+Build all three modules before publishing. Run `python scripts/collect-licenses.py` to bundle dependency licenses. Native and compiled WASM tests cover shape families, rotation, bounds, and validation.
 
