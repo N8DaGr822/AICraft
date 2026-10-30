@@ -57,12 +57,12 @@ class BundleTests(unittest.TestCase):
             self.assertFalse((cache/'outside.txt').exists())
 
     def test_catalog_matches_pinned_releases(self):
-        catalog = Path('AITest/Apps/AppCatalog.cs').read_text(encoding='utf-8')
+        catalog = json.loads(Path('AITest/Apps/catalog.json').read_text(encoding='utf-8'))
         apps = json.loads(installer.MANIFEST.read_text())
         self.assertEqual(len({app['id'] for app in apps}),10)
         for app in apps:
-            entry = next(line for line in catalog.splitlines() if f'"craft/{app["id"]}"' in line)
-            self.assertIn(f'"{app["version"]}"',entry)
+            entry = next(item for item in catalog if item["Route"] == f'craft/{app["id"]}')
+            self.assertEqual(app["version"], entry["Version"])
 
 if __name__ == '__main__':
     unittest.main()

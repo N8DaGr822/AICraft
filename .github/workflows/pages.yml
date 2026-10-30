@@ -56,6 +56,7 @@ jobs:
       - name: Publish Blazor
         run: |
           dotnet publish AITest/AITest.csproj -c Release -o publish
+          python3 scripts/test-discovery.py
           python3 scripts/prepare-pages.py publish/wwwroot /AICraft/
       - name: Install verified Craft browser apps
         run: |

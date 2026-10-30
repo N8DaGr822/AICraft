@@ -1,6 +1,6 @@
 # AICraft
 
-A mobile-friendly Blazor WebAssembly photo lab for trying Storytold Rust functionality in reusable Razor UI. Hosted on GitHub Pages at https://N8DaGr822.github.io/AICraft/ after deployment.
+A directory of free browser-based creative tools with a Blazor WebAssembly editor host and static discovery pages. Hosted on GitHub Pages at https://N8DaGr822.github.io/AICraft/ after deployment.
 
 ## First workflow
 
@@ -32,7 +32,7 @@ The generated wasm directory must exist before `dotnet publish`. It is intention
 
 ## GitHub Pages
 
-In repository Settings > Pages, select **GitHub Actions** as the source. Push to `main` to build, test, and deploy. The workflow publishes under `/AICraft/`; update that base path if the repository name changes. The generated 404.html permits client-side routes to load on direct navigation, though GitHub returns HTTP 404 for those URLs.
+In repository Settings > Pages, select **GitHub Actions** as the source. Push to `main` to build, test, and deploy. The workflow publishes under `/AICraft/`; update that base path if the repository name changes. The build generates physical `index.html` files for all registered editor routes and static discovery pages, so direct navigation and refresh return HTTP 200. The fallback `404.html` remains for unknown routes.
 
 ## Attribution
 
@@ -75,7 +75,7 @@ Build all three modules before publishing. Run `python scripts/collect-licenses.
 
 ## App launcher and Ledger Reborn
 
-`/apps` lists the registered tools. `AITest/Apps/AppCatalog.cs` supplies launcher and sidebar metadata; existing routes remain unchanged. Each Razor page owns its worker and runtime lifetime. New Rust tools register their page here and add their pinned crate build/test steps to the existing Pages workflow. Registration does not automatically port an upstream desktop application.
+`/apps/` lists the registered tools. `AITest/Apps/catalog.json` supplies discovery, launcher and sidebar metadata through `AppCatalog.cs`. The photo editor is now `/photo`; the root is the discovery homepage. Each Razor page owns its worker and runtime lifetime. New Rust tools register their page here and add their pinned crate build/test steps to the existing Pages workflow. Registration does not automatically port an upstream desktop application.
 
 `/ledger` integrates the unmodified Ledger Reborn engine at `d7f6b8a1f4ad6c4ae8b10100d1c93cf15940c21d` through Pyodide `314.0.7`. The runtime loads from jsDelivr only when Open ledger is selected; Python sources ship with this site. No ledger data is uploaded. This first workflow creates customers and service invoices, records partial payments, shows current invoice balances and date-specific trial balance / year-to-date accrual profit, and exports SQLite backups. It does not port the upstream desktop UI, tax, payroll, inventory workflows, or backup restoration.
 
@@ -112,3 +112,16 @@ Vector supports up to 50 editable shape layers with independent positions, geome
 Ledger has Overview, Invoices & payments, Bank, Accounts, and Reports sections. Bank and account registers use the original engine account-listing/general-ledger reports, respecting the selected report date. Invoice balances remain current. Backup controls live in Reports. There is no live bank connection or added posting behavior.
 
 Additional checks: `node scripts/test-photo-geometry.mjs`, `node scripts/test-vector-scene.mjs`, plus the expanded PDF WASM and Ledger Pyodide tests.
+
+
+## Discovery and launch preparation
+
+`AITest/Apps/catalog.json` is the shared catalog. Preserve the existing route/version fields when updating entries; the bundle consistency test compares version pins with `scripts/craft-releases.json`. Add genuine DateAdded dates for new entries. Existing registration dates were recovered from the October 29, 2026 catalog commits; unknown dates may remain null; no popularity or ratings are fabricated.
+
+`python scripts/prepare-pages.py publish/wwwroot /AICraft/` adjusts the base URL and runs `generate-discovery.py`. It creates the homepage, `/apps/`, fourteen `/applications/<slug>/` pages, about/contact/privacy/terms pages, sitemap, robots file and physical Blazor editor entry points. Run this once against fresh `dotnet publish` output, before installing the pinned Craft bundles as in CI. Discovery pages load no Blazor or editor engines. Their search/filter/sort enhancement is small vanilla JavaScript; all catalog links remain available without JavaScript. Development `dotnet run` provides the Blazor directory; use prepared publish output to preview the static pages.
+
+Canonical URLs currently use `https://n8dagr822.github.io` plus the deployment base path. Change `ORIGIN` in the generator when moving hosts. On a GitHub project site, `/AICraft/robots.txt` is not the origin-level robots file used by crawlers: publish the desired rules at the user-site root if you control it. The sitemap itself is valid at `/AICraft/sitemap.xml`; submit that URL using a verified webmaster account. Editor shells are noindex; public landing pages carry canonical, description, Open Graph, Twitter summary and structured data. Social image artwork is not yet supplied.
+
+Deployment: select GitHub Actions under repository Settings > Pages, review the changes, then push/merge to main. The existing workflow builds engines, runs tests, publishes Blazor, generates discovery pages, installs verified editor bundles and deploys. No deployment was triggered during this local implementation. Before promotion, test the deployed homepage, each landing page, editor launch and refresh, and upstream NOTICE URLs.
+
+See `Docs/Launch/` for submission drafts, screenshot tasks, launch checklist and a proposed announcement schedule. Licensing, CAD startup, upstream privacy auditing and cross-browser/mobile validation remain launch review items. No platform-wide open-source claim is made.

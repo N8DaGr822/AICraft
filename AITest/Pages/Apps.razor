@@ -1,13 +1,68 @@
+@page "/"
 @page "/apps"
-<PageTitle>AICraft · Apps</PageTitle>
-<h1>AICraft apps</h1>
-<p class="lead">Choose a workflow. Each engine loads when you open its lab.</p>
-<div class="row g-3">
-    @foreach (var app in AITest.Apps.AppCatalog.All)
-    {
-        <div class="col-md-6"><section class="card h-100"><div class="card-body">
-            <h2 class="h4">@app.Name</h2><p>@app.Description</p><p class="text-muted">@app.Runtime</p>
-            <a class="btn btn-primary" href="@app.Route">Open @app.Name</a>
-        </div></section></div>
-    }
+@using AITest.Apps
+<PageTitle>AICraft · Free browser-based creative tools</PageTitle>
+<div class="discovery">
+    <section class="directory-hero">
+        <p class="eyebrow">AICRAFT / YOUR BROWSER IS YOUR WORKSPACE</p>
+        <h1>Powerful software.<br />Free to use.<br /><span>Right in your browser.</span></h1>
+        <p>Discover and use browser-based alternatives to popular desktop applications. No installation, no subscriptions, just open and create.</p>
+        <a class="directory-button" href="apps#applications">Explore Applications</a>
+        <a href="apps#how-it-works">How It Works</a>
+    </section>
+    <section aria-labelledby="featured-heading">
+        <h2 id="featured-heading">Start with a focused tool</h2>
+        <p>Featured by the project maintainer — simple workflows, clearly stated limits.</p>
+        <div class="directory-grid">
+            @foreach (var app in AppCatalog.All.Where(x => x.Featured))
+            {
+                <a class="directory-card" target="_top" href="@($"applications/{app.Slug}/")" data-enhance-nav="false"><span class="eyebrow">@app.Category</span><h3>@app.Name</h3><p>@app.Description</p><span>Explore features →</span></a>
+            }
+        </div>
+    </section>
+    <section aria-labelledby="recent-heading">
+        <h2 id="recent-heading">Recently added</h2>
+        <p>Catalog registration dates from repository history.</p>
+        <div class="directory-grid">
+            @foreach (var app in AppCatalog.All.Where(x => x.DateAdded is not null).OrderByDescending(x => x.DateAdded).ThenBy(x => x.Name).Take(3))
+            {
+                <a class="directory-card" target="_top" href="@($"applications/{app.Slug}/")"><h3>@app.Name</h3><p>@app.Description</p><span>Added @app.DateAdded?.ToString("MMM d, yyyy")</span></a>
+            }
+        </div>
+    </section>
+    <section id="applications" aria-labelledby="directory-heading">
+        <h2 id="directory-heading">Find your next tool</h2>
+        <div class="directory-filters">
+            <label>Search applications<input type="search" @bind="search" @bind:event="oninput" placeholder="Try photo, PDF, or spreadsheet" /></label>
+            <label>Category<select @bind="category"><option value="">All categories</option>@foreach (var item in AppCatalog.All.Select(x => x.Category).Distinct().Order()) { <option>@item</option> }</select></label>
+            <label>Sort<select @bind="sort"><option value="name">Name A–Z</option><option value="category">Category</option><option value="recent">Recently added</option></select></label>
+        </div>
+        <p role="status">@Filtered.Count() applications</p>
+        <div class="directory-grid">
+            @foreach (var app in Filtered)
+            {
+                <section class="directory-card"><span class="eyebrow">@app.Category</span><h3><a target="_top" href="@($"applications/{app.Slug}/")">@app.Name</a></h3><p>@app.Description</p><p>Free to use · @(app.DateAdded?.ToString("MMM d, yyyy") ?? "Date added not recorded")</p><a href="@app.Route">Launch application →</a></section>
+            }
+        </div>
+        @if (!Filtered.Any()) { <p>No matching applications. Try another search or category.</p> }
+    </section>
+    <section id="how-it-works"><h2>From idea to open app</h2><ol class="directory-steps"><li><h3>Find an application</h3><p>Compare its features, licensing, and limitations.</p></li><li><h3>Open it in your browser</h3><p>Only the selected editor loads its engine.</p></li><li><h3>Start creating</h3><p>Try a small project and save or export before leaving.</p></li></ol></section>
+    <p>Independent tools and integrations. Comparable product names describe workflows, not affiliation or full feature parity.</p>
 </div>
+@code {
+    private string search = "", category = "", sort = "name";
+    private IEnumerable<AppCatalog.Entry> Filtered
+    {
+        get
+        {
+            var items = AppCatalog.All.Where(x => (category.Length == 0 || x.Category == category)
+                && $"{x.Name} {x.Description} {x.ComparableSoftware}".Contains(search.Trim(), StringComparison.OrdinalIgnoreCase));
+            return sort switch
+            {
+                "category" => items.OrderBy(x => x.Category).ThenBy(x => x.Name),
+                "recent" => items.OrderByDescending(x => x.DateAdded).ThenBy(x => x.Name),
+                _ => items.OrderBy(x => x.Name)
+            };
+        }
+    }
+}

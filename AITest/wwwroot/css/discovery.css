@@ -1,0 +1,34 @@
+/* Discovery: Scoped colors preserve the existing editors and their controls. */
+.discovery { --surface:#fff; --ink:#182d36; --muted:#48616a; --line:#d9e4e5; --accent:#00695c; color:var(--ink); background:var(--surface); line-height:1.65; }
+.discovery * { box-sizing:border-box; }
+.discovery a { color:var(--accent); }
+.discovery h1 { font-size:clamp(2.4rem,5vw,4.7rem); line-height:1.08; letter-spacing:-.045em; max-width:900px; margin:1.2rem 0; }
+.discovery h1 span { color:var(--accent); }
+.discovery h2 { font-size:1.9rem; letter-spacing:-.025em; }
+.discovery h3 { font-size:1.2rem; }
+.discovery section { scroll-margin-top:4rem; }
+.discovery > section { padding:2.5rem 0; }
+.discovery .eyebrow { font-size:.75rem; font-weight:700; letter-spacing:.09em; text-transform:uppercase; color:var(--muted); }
+.directory-hero > p:not(.eyebrow) { max-width:640px; font-size:1.15rem; }
+.discovery .directory-button { display:inline-block; padding:.8rem 1.2rem; background:var(--accent); color:var(--surface); border-radius:8px; text-decoration:none; font-weight:700; margin:1rem 1.5rem 1rem 0; }
+.directory-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,250px),1fr)); gap:1rem; }
+.discovery .directory-card { padding:1.4rem; border:1px solid var(--line); border-radius:12px; background:var(--surface); color:var(--ink); text-decoration:none; }
+.directory-card h3 { margin:.8rem 0; }
+.directory-card p { color:var(--muted); }
+.directory-filters { display:flex; flex-wrap:wrap; gap:1rem; margin:1.5rem 0; }
+.directory-filters label { flex:1 1 180px; font-weight:600; }
+.directory-filters input,.directory-filters select { display:block; width:100%; padding:.7rem; border:1px solid var(--muted); border-radius:6px; background:var(--surface); color:var(--ink); font:inherit; }
+.directory-steps { display:grid; grid-template-columns:repeat(auto-fit,minmax(190px,1fr)); gap:2rem; padding-left:1.5rem; }
+.directory-shell { max-width:1200px; margin:auto; padding:0 1.5rem; }
+.directory-header,.directory-footer { display:flex; flex-wrap:wrap; align-items:center; gap:1.5rem; padding:1.5rem 0; border-bottom:1px solid var(--line); }
+.directory-footer { border-top:1px solid var(--line); margin-top:3rem; font-size:.9rem; }
+.directory-brand { font-size:1.4rem; font-weight:800; text-decoration:none; margin-right:auto; }
+.discovery :focus-visible { outline:3px solid var(--accent); outline-offset:4px; }
+.skip-link { position:absolute; top:-100px; left:1rem; z-index:100; background:white; color:#00695c; padding:1rem; }
+.skip-link:focus { top:1rem; }
+.workflow-preview { border:1px solid var(--line); border-left:5px solid var(--accent); border-radius:8px; padding:1.5rem; margin:2rem 0; }
+@media(prefers-color-scheme:dark) { .discovery { --surface:#14252c; --ink:#ecf3f3; --muted:#b6c9ce; --line:#3a505a; --accent:#80deca; color-scheme:dark; } }
+
+body.discovery { margin:0; font-family:system-ui, sans-serif; }
+.discovery [hidden] { display:none !important; }
+.discovery p { max-width:75ch; }

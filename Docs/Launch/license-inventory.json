@@ -1,0 +1,781 @@
+[
+  {
+    "id": "wordcraft",
+    "version": "0.12.0",
+    "archiveSha256": "4cf6808b762e6d1211a569dd0cac831b7f1e7eb1a41f70cae90bceeb2c6a6acf",
+    "matchesPin": true,
+    "noticeSha256": "8943b156492b6f0caa7c59a53f97d7cc6a7b79ea3e54147b491e0821538606da",
+    "noticeFiles": [
+      "OFL-shippori-mincho.txt",
+      "LICENSE-MIT",
+      "OFL-noto-sans-hebrew.txt",
+      "OFL-biz-ud-mincho.txt",
+      "LICENSE-APACHE",
+      "OFL-noto-sans-georgian.txt",
+      "OFL-biz-ud-pgothic.txt",
+      "OFL-noto-sans-symbols-2.txt",
+      "OFL-noto-sans-symbols.txt",
+      "OFL-noto-sans-cjk-sc.txt",
+      "OFL-noto-sans-arabic.txt",
+      "OFL-noto-sans-devanagari.txt",
+      "NOTICE",
+      "ATTRIBUTION.md",
+      "OFL-noto-sans-thai.txt",
+      "OFL-lxgw-wenkai-lite.txt",
+      "OFL-nanum-gothic.txt"
+    ],
+    "source": "https://github.com/storytold/wordcraft/tree/v0.12.0",
+    "brandTerms": "https://github.com/storytold/wordcraft/blob/v0.12.0/docs/brand/LICENSE-brand.txt",
+    "Cargo.lockSha256": "423b0de3801882d7e852d5c3d24605c9a7295263d34ed8150e51427f77b17400",
+    "mplSourceCandidates": [],
+    "docs/brand/LICENSE-brand.txtSha256": "ed4475eacf972c9584aa335001c59dfa646eb222549b928ffd6aefd4c805b41a"
+  },
+  {
+    "id": "gridcraft",
+    "version": "0.13.0",
+    "archiveSha256": "e232edde1898459f13568ca7b1f3feecb4037f0cbb8f6aec86de1a3c096af5dc",
+    "matchesPin": true,
+    "noticeSha256": "40e4a2a066feaa602d582093fb8d0aaa34b3a3f86ee880d6f34b53fd85026fc9",
+    "noticeFiles": [
+      "LICENSE-MIT",
+      "LICENSE-APACHE",
+      "NOTICE",
+      "ATTRIBUTION.md"
+    ],
+    "source": "https://github.com/storytold/gridcraft/tree/v0.13.0",
+    "brandTerms": "https://github.com/storytold/gridcraft/blob/v0.13.0/docs/brand/LICENSE-brand.txt",
+    "Cargo.lockSha256": "9b874c6d554cdd9a41a0cb93a4a9957bbceeb993fd21f006726b93f0ca59df3a",
+    "mplSourceCandidates": [],
+    "docs/brand/LICENSE-brand.txtSha256": "d60f1608b31dde193c34e4afb5d922d2c700ead06c4bb3735959334a09b1ff2c"
+  },
+  {
+    "id": "deckcraft",
+    "version": "0.12.0",
+    "archiveSha256": "4625fc2b66f0a0065b1cd549d94dd51f4e0f4f6082638d399c530ffdc56ebab5",
+    "matchesPin": true,
+    "noticeSha256": "2ce764ed5d83f2453a7dba485092c0c41b465fe795b31c2c59bc5279332bc4f3",
+    "noticeFiles": [
+      "NOTICE",
+      "LICENSE-MIT",
+      "LICENSE-APACHE"
+    ],
+    "source": "https://github.com/storytold/deckcraft/tree/v0.12.0",
+    "brandTerms": "https://github.com/storytold/deckcraft/blob/v0.12.0/docs/brand/LICENSE-brand.txt",
+    "Cargo.lockSha256": "ac2c7447146bd7c784ae21574aaaf1824849cfb99fed644934ab69fe801b0514",
+    "mplSourceCandidates": [
+      {
+        "name": "symphonia",
+        "version": "0.5.5",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "5773a4c030a19d9bfaa090f49746ff35c75dfddfa700df7a5939d5e076a57039",
+        "sourceDownloadSha256": "5773a4c030a19d9bfaa090f49746ff35c75dfddfa700df7a5939d5e076a57039",
+        "sourceMatchesLockChecksum": true,
+        "sourceIncludesMplText": false
+      },
+      {
+        "name": "symphonia-bundle-flac",
+        "version": "0.5.5",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "c91565e180aea25d9b80a910c546802526ffd0072d0b8974e3ebe59b686c9976",
+        "sourceDownloadSha256": "c91565e180aea25d9b80a910c546802526ffd0072d0b8974e3ebe59b686c9976",
+        "sourceMatchesLockChecksum": true,
+        "sourceIncludesMplText": false
+      },
+      {
+        "name": "symphonia-bundle-mp3",
+        "version": "0.5.5",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "4872dd6bb56bf5eac799e3e957aa1981086c3e613b27e0ac23b176054f7c57ed",
+        "sourceDownloadSha256": "4872dd6bb56bf5eac799e3e957aa1981086c3e613b27e0ac23b176054f7c57ed",
+        "sourceMatchesLockChecksum": true,
+        "sourceIncludesMplText": false
+      },
+      {
+        "name": "symphonia-codec-aac",
+        "version": "0.5.5",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "4c263845aa86881416849c1729a54c7f55164f8b96111dba59de46849e73a790",
+        "sourceDownloadSha256": "4c263845aa86881416849c1729a54c7f55164f8b96111dba59de46849e73a790",
+        "sourceMatchesLockChecksum": true,
+        "sourceIncludesMplText": false
+      },
+      {
+        "name": "symphonia-codec-adpcm",
+        "version": "0.5.5",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "2dddc50e2bbea4cfe027441eece77c46b9f319748605ab8f3443350129ddd07f",
+        "sourceDownloadSha256": "2dddc50e2bbea4cfe027441eece77c46b9f319748605ab8f3443350129ddd07f",
+        "sourceMatchesLockChecksum": true,
+        "sourceIncludesMplText": false
+      },
+      {
+        "name": "symphonia-codec-alac",
+        "version": "0.5.5",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "8413fa754942ac16a73634c9dfd1500ed5c61430956b33728567f667fdd393ab",
+        "sourceDownloadSha256": "8413fa754942ac16a73634c9dfd1500ed5c61430956b33728567f667fdd393ab",
+        "sourceMatchesLockChecksum": true,
+        "sourceIncludesMplText": false
+      },
+      {
+        "name": "symphonia-codec-pcm",
+        "version": "0.5.5",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "4e89d716c01541ad3ebe7c91ce4c8d38a7cf266a3f7b2f090b108fb0cb031d95",
+        "sourceDownloadSha256": "4e89d716c01541ad3ebe7c91ce4c8d38a7cf266a3f7b2f090b108fb0cb031d95",
+        "sourceMatchesLockChecksum": true,
+        "sourceIncludesMplText": false
+      },
+      {
+        "name": "symphonia-codec-vorbis",
+        "version": "0.5.5",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "f025837c309cd69ffef572750b4a2257b59552c5399a5e49707cc5b1b85d1c73",
+        "sourceDownloadSha256": "f025837c309cd69ffef572750b4a2257b59552c5399a5e49707cc5b1b85d1c73",
+        "sourceMatchesLockChecksum": true,
+        "sourceIncludesMplText": false
+      },
+      {
+        "name": "symphonia-core",
+        "version": "0.5.5",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "ea00cc4f79b7f6bb7ff87eddc065a1066f3a43fe1875979056672c9ef948c2af",
+        "sourceDownloadSha256": "ea00cc4f79b7f6bb7ff87eddc065a1066f3a43fe1875979056672c9ef948c2af",
+        "sourceMatchesLockChecksum": true,
+        "sourceIncludesMplText": false
+      },
+      {
+        "name": "symphonia-format-caf",
+        "version": "0.5.5",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "b8faf379316b6b6e6bbc274d00e7a592e0d63ff1a7e182ce8ba25e24edd3d096",
+        "sourceDownloadSha256": "b8faf379316b6b6e6bbc274d00e7a592e0d63ff1a7e182ce8ba25e24edd3d096",
+        "sourceMatchesLockChecksum": true,
+        "sourceIncludesMplText": false
+      },
+      {
+        "name": "symphonia-format-isomp4",
+        "version": "0.5.5",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "243739585d11f81daf8dac8d9f3d18cc7898f6c09a259675fc364b382c30e0a5",
+        "sourceDownloadSha256": "243739585d11f81daf8dac8d9f3d18cc7898f6c09a259675fc364b382c30e0a5",
+        "sourceMatchesLockChecksum": true,
+        "sourceIncludesMplText": false
+      },
+      {
+        "name": "symphonia-format-mkv",
+        "version": "0.5.5",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "122d786d2c43a49beb6f397551b4a050d8229eaa54c7ddf9ee4b98899b8742d0",
+        "sourceDownloadSha256": "122d786d2c43a49beb6f397551b4a050d8229eaa54c7ddf9ee4b98899b8742d0",
+        "sourceMatchesLockChecksum": true,
+        "sourceIncludesMplText": false
+      },
+      {
+        "name": "symphonia-format-ogg",
+        "version": "0.5.5",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "2b4955c67c1ed3aa8ae8428d04ca8397fbef6a19b2b051e73b5da8b1435639cb",
+        "sourceDownloadSha256": "2b4955c67c1ed3aa8ae8428d04ca8397fbef6a19b2b051e73b5da8b1435639cb",
+        "sourceMatchesLockChecksum": true,
+        "sourceIncludesMplText": false
+      },
+      {
+        "name": "symphonia-format-riff",
+        "version": "0.5.5",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "c2d7c3df0e7d94efb68401d81906eae73c02b40d5ec1a141962c592d0f11a96f",
+        "sourceDownloadSha256": "c2d7c3df0e7d94efb68401d81906eae73c02b40d5ec1a141962c592d0f11a96f",
+        "sourceMatchesLockChecksum": true,
+        "sourceIncludesMplText": false
+      },
+      {
+        "name": "symphonia-metadata",
+        "version": "0.5.5",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "36306ff42b9ffe6e5afc99d49e121e0bd62fe79b9db7b9681d48e29fa19e6b16",
+        "sourceDownloadSha256": "36306ff42b9ffe6e5afc99d49e121e0bd62fe79b9db7b9681d48e29fa19e6b16",
+        "sourceMatchesLockChecksum": true,
+        "sourceIncludesMplText": false
+      },
+      {
+        "name": "symphonia-utils-xiph",
+        "version": "0.5.5",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "ee27c85ab799a338446b68eec77abf42e1a6f1bb490656e121c6e27bfbab9f16",
+        "sourceDownloadSha256": "ee27c85ab799a338446b68eec77abf42e1a6f1bb490656e121c6e27bfbab9f16",
+        "sourceMatchesLockChecksum": true,
+        "sourceIncludesMplText": false
+      }
+    ],
+    "docs/brand/LICENSE-brand.txtSha256": "c5ad8e77d0dd8939161b4c4eca7aaba2437d6340c29e7809fa4679f0f2a82f62"
+  },
+  {
+    "id": "soundcraft",
+    "version": "0.14.0",
+    "archiveSha256": "76290a220377d80aa62a3a196c8bcc8b28e01eaf5b0aad912fabf7eb5a9a767d",
+    "matchesPin": true,
+    "noticeSha256": "a76f5b9aa65ceb4fcd680082f60c2d1ae4fbf7cafdef8d46e75b3eea0798a5b0",
+    "noticeFiles": [
+      "LICENSE-MIT",
+      "LICENSE-APACHE",
+      "NOTICE",
+      "ATTRIBUTION.md"
+    ],
+    "source": "https://github.com/storytold/soundcraft/tree/v0.14.0",
+    "brandTerms": "https://github.com/storytold/soundcraft/blob/v0.14.0/docs/brand/LICENSE-brand.txt",
+    "Cargo.lockSha256": "8adffc5686d1e9eac116e991e221415cb960523c6bbf48721654a13679e56274",
+    "mplSourceCandidates": [
+      {
+        "name": "symphonia",
+        "version": "0.6.1",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "a7edef6a96b696d4e0cab5ee9ebb7ca155ed95f30a6b45bbb8b97d2727f02424",
+        "sourceDownloadSha256": "a7edef6a96b696d4e0cab5ee9ebb7ca155ed95f30a6b45bbb8b97d2727f02424",
+        "sourceMatchesLockChecksum": true,
+        "sourceIncludesMplText": true
+      },
+      {
+        "name": "symphonia-bundle-flac",
+        "version": "0.6.1",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "6405d5c34ff6f8f7ca08a4101efe66d21e180f7322ef9359900a0e55698a7892",
+        "sourceDownloadSha256": "6405d5c34ff6f8f7ca08a4101efe66d21e180f7322ef9359900a0e55698a7892",
+        "sourceMatchesLockChecksum": true,
+        "sourceIncludesMplText": true
+      },
+      {
+        "name": "symphonia-bundle-mp3",
+        "version": "0.6.1",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "98ea5ffc8716bff677dfb3b01b420c7b758de901a72b8c330bf2040ab74b4add",
+        "sourceDownloadSha256": "98ea5ffc8716bff677dfb3b01b420c7b758de901a72b8c330bf2040ab74b4add",
+        "sourceMatchesLockChecksum": true,
+        "sourceIncludesMplText": true
+      },
+      {
+        "name": "symphonia-codec-aac",
+        "version": "0.6.1",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "f5bf8e39552d34a3c4c98333370e62f48c92456d2e814f273b5c3ad7c4a5f45c",
+        "sourceDownloadSha256": "f5bf8e39552d34a3c4c98333370e62f48c92456d2e814f273b5c3ad7c4a5f45c",
+        "sourceMatchesLockChecksum": true,
+        "sourceIncludesMplText": true
+      },
+      {
+        "name": "symphonia-codec-adpcm",
+        "version": "0.6.1",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "445932ecb0c59362fde9c082dd63a75380650c5077fdb8b80b8cac850442a74c",
+        "sourceDownloadSha256": "445932ecb0c59362fde9c082dd63a75380650c5077fdb8b80b8cac850442a74c",
+        "sourceMatchesLockChecksum": true,
+        "sourceIncludesMplText": true
+      },
+      {
+        "name": "symphonia-codec-alac",
+        "version": "0.6.1",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "920a78f96f3cf62932d0c497959c0cc2100ef36b03c7ca1417b260f432a482d8",
+        "sourceDownloadSha256": "920a78f96f3cf62932d0c497959c0cc2100ef36b03c7ca1417b260f432a482d8",
+        "sourceMatchesLockChecksum": true,
+        "sourceIncludesMplText": true
+      },
+      {
+        "name": "symphonia-codec-pcm",
+        "version": "0.6.1",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "e04ba75686acbe43542fdd374571195f0530c0b7785ca25cc6840e9c6c4b6eea",
+        "sourceDownloadSha256": "e04ba75686acbe43542fdd374571195f0530c0b7785ca25cc6840e9c6c4b6eea",
+        "sourceMatchesLockChecksum": true,
+        "sourceIncludesMplText": true
+      },
+      {
+        "name": "symphonia-codec-vorbis",
+        "version": "0.6.1",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "73d90b4fcf796137cc683c538282804ff9629f8ad9dbfd881fcbba331ac4e986",
+        "sourceDownloadSha256": "73d90b4fcf796137cc683c538282804ff9629f8ad9dbfd881fcbba331ac4e986",
+        "sourceMatchesLockChecksum": true,
+        "sourceIncludesMplText": true
+      },
+      {
+        "name": "symphonia-common",
+        "version": "0.6.1",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "2acc3fcc18ec9b8cdd48614e259c4cf0d27b71d41e5d9b120b42c5adab12d7c4",
+        "sourceDownloadSha256": "2acc3fcc18ec9b8cdd48614e259c4cf0d27b71d41e5d9b120b42c5adab12d7c4",
+        "sourceMatchesLockChecksum": true,
+        "sourceIncludesMplText": true
+      },
+      {
+        "name": "symphonia-core",
+        "version": "0.6.1",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "01c412864d599d4750d0c3d684d7e093ec05e5309681ef5252cc1096a437f6e0",
+        "sourceDownloadSha256": "01c412864d599d4750d0c3d684d7e093ec05e5309681ef5252cc1096a437f6e0",
+        "sourceMatchesLockChecksum": true,
+        "sourceIncludesMplText": true
+      },
+      {
+        "name": "symphonia-format-caf",
+        "version": "0.6.1",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "ab64327ee1920531c5bf86cf7e9cd1a599d57013ddc30691da62683cefc65191",
+        "sourceDownloadSha256": "ab64327ee1920531c5bf86cf7e9cd1a599d57013ddc30691da62683cefc65191",
+        "sourceMatchesLockChecksum": true,
+        "sourceIncludesMplText": true
+      },
+      {
+        "name": "symphonia-format-isomp4",
+        "version": "0.6.1",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "0e681a70e1870d34e02abf1dbc51e4267c3f1827801474e8870be8c689fc4dc3",
+        "sourceDownloadSha256": "0e681a70e1870d34e02abf1dbc51e4267c3f1827801474e8870be8c689fc4dc3",
+        "sourceMatchesLockChecksum": true,
+        "sourceIncludesMplText": true
+      },
+      {
+        "name": "symphonia-format-mkv",
+        "version": "0.6.1",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "d015c5c0558864665894b3f4cbd95e10abb01b9c868e751c72670f326a56360e",
+        "sourceDownloadSha256": "d015c5c0558864665894b3f4cbd95e10abb01b9c868e751c72670f326a56360e",
+        "sourceMatchesLockChecksum": true,
+        "sourceIncludesMplText": true
+      },
+      {
+        "name": "symphonia-format-ogg",
+        "version": "0.6.1",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "0b5495e7f7e3c7035328d82b6d6e377eef289bb0c4105bdeb557fc93a833f994",
+        "sourceDownloadSha256": "0b5495e7f7e3c7035328d82b6d6e377eef289bb0c4105bdeb557fc93a833f994",
+        "sourceMatchesLockChecksum": true,
+        "sourceIncludesMplText": true
+      },
+      {
+        "name": "symphonia-format-riff",
+        "version": "0.6.1",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "1ff70929083a8c1a5f6cd7c904b6071c7914ad04739b510c2f7239dfc9b7dabe",
+        "sourceDownloadSha256": "1ff70929083a8c1a5f6cd7c904b6071c7914ad04739b510c2f7239dfc9b7dabe",
+        "sourceMatchesLockChecksum": true,
+        "sourceIncludesMplText": true
+      },
+      {
+        "name": "symphonia-metadata",
+        "version": "0.6.1",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "83713a97705d77bdef7cdbc0768fd6e5a54e4cd7e48d60a806ae85639e2c87c6",
+        "sourceDownloadSha256": "83713a97705d77bdef7cdbc0768fd6e5a54e4cd7e48d60a806ae85639e2c87c6",
+        "sourceMatchesLockChecksum": true,
+        "sourceIncludesMplText": true
+      }
+    ],
+    "docs/brand/LICENSE-brand.txtSha256": "dbd6e8555a7f6d393f89a47cd44773e1f1f415c22551a78449bd4b43bec49903"
+  },
+  {
+    "id": "filmcraft",
+    "version": "0.14.0",
+    "archiveSha256": "58140e222600c3fbb8ab5fdb94b95abf31cf13d2ad057182b7a6b64843a7a330",
+    "matchesPin": true,
+    "noticeSha256": "717a46e0fed6b8381cde394291c51d257db53ab9a0de333fcaa515a7a1ca5eec",
+    "noticeFiles": [
+      "LICENSE-MIT",
+      "LICENSE-APACHE",
+      "NOTICE"
+    ],
+    "source": "https://github.com/storytold/filmcraft/tree/v0.14.0",
+    "brandTerms": "https://github.com/storytold/filmcraft/blob/v0.14.0/docs/brand/LICENSE-brand.txt",
+    "Cargo.lockSha256": "ffcb1c2941f8e96333f55e0491eb1bd5fa41dbc2c18898f09fe9452c5dfb3f18",
+    "mplSourceCandidates": [
+      {
+        "name": "symphonia",
+        "version": "0.5.5",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "5773a4c030a19d9bfaa090f49746ff35c75dfddfa700df7a5939d5e076a57039",
+        "sourceDownloadSha256": "5773a4c030a19d9bfaa090f49746ff35c75dfddfa700df7a5939d5e076a57039",
+        "sourceMatchesLockChecksum": true,
+        "sourceIncludesMplText": false
+      },
+      {
+        "name": "symphonia-bundle-flac",
+        "version": "0.5.5",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "c91565e180aea25d9b80a910c546802526ffd0072d0b8974e3ebe59b686c9976",
+        "sourceDownloadSha256": "c91565e180aea25d9b80a910c546802526ffd0072d0b8974e3ebe59b686c9976",
+        "sourceMatchesLockChecksum": true,
+        "sourceIncludesMplText": false
+      },
+      {
+        "name": "symphonia-bundle-mp3",
+        "version": "0.5.5",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "4872dd6bb56bf5eac799e3e957aa1981086c3e613b27e0ac23b176054f7c57ed",
+        "sourceDownloadSha256": "4872dd6bb56bf5eac799e3e957aa1981086c3e613b27e0ac23b176054f7c57ed",
+        "sourceMatchesLockChecksum": true,
+        "sourceIncludesMplText": false
+      },
+      {
+        "name": "symphonia-codec-aac",
+        "version": "0.5.5",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "4c263845aa86881416849c1729a54c7f55164f8b96111dba59de46849e73a790",
+        "sourceDownloadSha256": "4c263845aa86881416849c1729a54c7f55164f8b96111dba59de46849e73a790",
+        "sourceMatchesLockChecksum": true,
+        "sourceIncludesMplText": false
+      },
+      {
+        "name": "symphonia-codec-alac",
+        "version": "0.5.5",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "8413fa754942ac16a73634c9dfd1500ed5c61430956b33728567f667fdd393ab",
+        "sourceDownloadSha256": "8413fa754942ac16a73634c9dfd1500ed5c61430956b33728567f667fdd393ab",
+        "sourceMatchesLockChecksum": true,
+        "sourceIncludesMplText": false
+      },
+      {
+        "name": "symphonia-codec-pcm",
+        "version": "0.5.5",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "4e89d716c01541ad3ebe7c91ce4c8d38a7cf266a3f7b2f090b108fb0cb031d95",
+        "sourceDownloadSha256": "4e89d716c01541ad3ebe7c91ce4c8d38a7cf266a3f7b2f090b108fb0cb031d95",
+        "sourceMatchesLockChecksum": true,
+        "sourceIncludesMplText": false
+      },
+      {
+        "name": "symphonia-codec-vorbis",
+        "version": "0.5.5",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "f025837c309cd69ffef572750b4a2257b59552c5399a5e49707cc5b1b85d1c73",
+        "sourceDownloadSha256": "f025837c309cd69ffef572750b4a2257b59552c5399a5e49707cc5b1b85d1c73",
+        "sourceMatchesLockChecksum": true,
+        "sourceIncludesMplText": false
+      },
+      {
+        "name": "symphonia-core",
+        "version": "0.5.5",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "ea00cc4f79b7f6bb7ff87eddc065a1066f3a43fe1875979056672c9ef948c2af",
+        "sourceDownloadSha256": "ea00cc4f79b7f6bb7ff87eddc065a1066f3a43fe1875979056672c9ef948c2af",
+        "sourceMatchesLockChecksum": true,
+        "sourceIncludesMplText": false
+      },
+      {
+        "name": "symphonia-format-isomp4",
+        "version": "0.5.5",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "243739585d11f81daf8dac8d9f3d18cc7898f6c09a259675fc364b382c30e0a5",
+        "sourceDownloadSha256": "243739585d11f81daf8dac8d9f3d18cc7898f6c09a259675fc364b382c30e0a5",
+        "sourceMatchesLockChecksum": true,
+        "sourceIncludesMplText": false
+      },
+      {
+        "name": "symphonia-format-ogg",
+        "version": "0.5.5",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "2b4955c67c1ed3aa8ae8428d04ca8397fbef6a19b2b051e73b5da8b1435639cb",
+        "sourceDownloadSha256": "2b4955c67c1ed3aa8ae8428d04ca8397fbef6a19b2b051e73b5da8b1435639cb",
+        "sourceMatchesLockChecksum": true,
+        "sourceIncludesMplText": false
+      },
+      {
+        "name": "symphonia-format-riff",
+        "version": "0.5.5",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "c2d7c3df0e7d94efb68401d81906eae73c02b40d5ec1a141962c592d0f11a96f",
+        "sourceDownloadSha256": "c2d7c3df0e7d94efb68401d81906eae73c02b40d5ec1a141962c592d0f11a96f",
+        "sourceMatchesLockChecksum": true,
+        "sourceIncludesMplText": false
+      },
+      {
+        "name": "symphonia-metadata",
+        "version": "0.5.5",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "36306ff42b9ffe6e5afc99d49e121e0bd62fe79b9db7b9681d48e29fa19e6b16",
+        "sourceDownloadSha256": "36306ff42b9ffe6e5afc99d49e121e0bd62fe79b9db7b9681d48e29fa19e6b16",
+        "sourceMatchesLockChecksum": true,
+        "sourceIncludesMplText": false
+      },
+      {
+        "name": "symphonia-utils-xiph",
+        "version": "0.5.5",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "ee27c85ab799a338446b68eec77abf42e1a6f1bb490656e121c6e27bfbab9f16",
+        "sourceDownloadSha256": "ee27c85ab799a338446b68eec77abf42e1a6f1bb490656e121c6e27bfbab9f16",
+        "sourceMatchesLockChecksum": true,
+        "sourceIncludesMplText": false
+      }
+    ],
+    "docs/brand/LICENSE-brand.txtSha256": "d30f3aee39b72be3d1c1bdf994b75470ff53a354ca8ba6039c3a70a647b732fe"
+  },
+  {
+    "id": "lightcraft",
+    "version": "0.15.0",
+    "archiveSha256": "fb46de80ad77814ea33efa3d2799edbaca3462c96da88347fb874f4d6fd15564",
+    "matchesPin": true,
+    "noticeSha256": "3f441009b57339b31404e8b56ea4e2d32b74a0c1c9aa0276b947c8f1452adc09",
+    "noticeFiles": [
+      "OFL-shippori-mincho.txt",
+      "LICENSE-MIT",
+      "OFL-noto-sans-hebrew.txt",
+      "OFL-biz-ud-mincho.txt",
+      "LICENSE-APACHE",
+      "OFL-noto-sans-georgian.txt",
+      "OFL-biz-ud-pgothic.txt",
+      "OFL-Inter.txt",
+      "OFL-noto-sans-symbols-2.txt",
+      "OFL-noto-sans-symbols.txt",
+      "OFL-noto-sans-cjk-sc.txt",
+      "OFL-noto-sans-arabic.txt",
+      "OFL-noto-sans-devanagari.txt",
+      "NOTICE",
+      "OFL-noto-sans-thai.txt",
+      "OFL-lxgw-wenkai-lite.txt",
+      "OFL-nanum-gothic.txt"
+    ],
+    "source": "https://github.com/storytold/lightcraft/tree/v0.15.0",
+    "brandTerms": "https://github.com/storytold/lightcraft/blob/v0.15.0/docs/brand/LICENSE-brand.txt",
+    "Cargo.lockSha256": "95b83a3be77674fbe2ce3aa8550a5c631b31b17e0110e8ab152d094db2036d37",
+    "mplSourceCandidates": [],
+    "docs/brand/LICENSE-brand.txtSha256": "d516dfeae4a19d636c0d16f389d0a8593efd9dd259b8832bb06722a3dc09e0ce"
+  },
+  {
+    "id": "effectcraft",
+    "version": "0.18.0",
+    "archiveSha256": "cc3326670a37a62499b132d20773016d20f576714aaf6b4946744ae6876fa2aa",
+    "matchesPin": true,
+    "noticeSha256": "c7ecb79db5a35e749c037773c9867d07f6ff598edce3d72bd443b4d00f24e0be",
+    "noticeFiles": [
+      "LICENSE-MIT",
+      "LICENSE-APACHE",
+      "NOTICE"
+    ],
+    "source": "https://github.com/storytold/effectcraft/tree/v0.18.0",
+    "brandTerms": "https://github.com/storytold/effectcraft/blob/v0.18.0/docs/brand/LICENSE-brand.txt",
+    "Cargo.lockSha256": "5c4ed732c8eece087cfb9c06f254b3b36d97bf3952629fbe54733d7596a8b55b",
+    "mplSourceCandidates": [
+      {
+        "name": "symphonia",
+        "version": "0.5.5",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "5773a4c030a19d9bfaa090f49746ff35c75dfddfa700df7a5939d5e076a57039",
+        "sourceDownloadSha256": "5773a4c030a19d9bfaa090f49746ff35c75dfddfa700df7a5939d5e076a57039",
+        "sourceMatchesLockChecksum": true,
+        "sourceIncludesMplText": false
+      },
+      {
+        "name": "symphonia-bundle-flac",
+        "version": "0.5.5",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "c91565e180aea25d9b80a910c546802526ffd0072d0b8974e3ebe59b686c9976",
+        "sourceDownloadSha256": "c91565e180aea25d9b80a910c546802526ffd0072d0b8974e3ebe59b686c9976",
+        "sourceMatchesLockChecksum": true,
+        "sourceIncludesMplText": false
+      },
+      {
+        "name": "symphonia-bundle-mp3",
+        "version": "0.5.5",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "4872dd6bb56bf5eac799e3e957aa1981086c3e613b27e0ac23b176054f7c57ed",
+        "sourceDownloadSha256": "4872dd6bb56bf5eac799e3e957aa1981086c3e613b27e0ac23b176054f7c57ed",
+        "sourceMatchesLockChecksum": true,
+        "sourceIncludesMplText": false
+      },
+      {
+        "name": "symphonia-codec-aac",
+        "version": "0.5.5",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "4c263845aa86881416849c1729a54c7f55164f8b96111dba59de46849e73a790",
+        "sourceDownloadSha256": "4c263845aa86881416849c1729a54c7f55164f8b96111dba59de46849e73a790",
+        "sourceMatchesLockChecksum": true,
+        "sourceIncludesMplText": false
+      },
+      {
+        "name": "symphonia-codec-alac",
+        "version": "0.5.5",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "8413fa754942ac16a73634c9dfd1500ed5c61430956b33728567f667fdd393ab",
+        "sourceDownloadSha256": "8413fa754942ac16a73634c9dfd1500ed5c61430956b33728567f667fdd393ab",
+        "sourceMatchesLockChecksum": true,
+        "sourceIncludesMplText": false
+      },
+      {
+        "name": "symphonia-codec-pcm",
+        "version": "0.5.5",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "4e89d716c01541ad3ebe7c91ce4c8d38a7cf266a3f7b2f090b108fb0cb031d95",
+        "sourceDownloadSha256": "4e89d716c01541ad3ebe7c91ce4c8d38a7cf266a3f7b2f090b108fb0cb031d95",
+        "sourceMatchesLockChecksum": true,
+        "sourceIncludesMplText": false
+      },
+      {
+        "name": "symphonia-codec-vorbis",
+        "version": "0.5.5",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "f025837c309cd69ffef572750b4a2257b59552c5399a5e49707cc5b1b85d1c73",
+        "sourceDownloadSha256": "f025837c309cd69ffef572750b4a2257b59552c5399a5e49707cc5b1b85d1c73",
+        "sourceMatchesLockChecksum": true,
+        "sourceIncludesMplText": false
+      },
+      {
+        "name": "symphonia-core",
+        "version": "0.5.5",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "ea00cc4f79b7f6bb7ff87eddc065a1066f3a43fe1875979056672c9ef948c2af",
+        "sourceDownloadSha256": "ea00cc4f79b7f6bb7ff87eddc065a1066f3a43fe1875979056672c9ef948c2af",
+        "sourceMatchesLockChecksum": true,
+        "sourceIncludesMplText": false
+      },
+      {
+        "name": "symphonia-format-isomp4",
+        "version": "0.5.5",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "243739585d11f81daf8dac8d9f3d18cc7898f6c09a259675fc364b382c30e0a5",
+        "sourceDownloadSha256": "243739585d11f81daf8dac8d9f3d18cc7898f6c09a259675fc364b382c30e0a5",
+        "sourceMatchesLockChecksum": true,
+        "sourceIncludesMplText": false
+      },
+      {
+        "name": "symphonia-format-ogg",
+        "version": "0.5.5",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "2b4955c67c1ed3aa8ae8428d04ca8397fbef6a19b2b051e73b5da8b1435639cb",
+        "sourceDownloadSha256": "2b4955c67c1ed3aa8ae8428d04ca8397fbef6a19b2b051e73b5da8b1435639cb",
+        "sourceMatchesLockChecksum": true,
+        "sourceIncludesMplText": false
+      },
+      {
+        "name": "symphonia-format-riff",
+        "version": "0.5.5",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "c2d7c3df0e7d94efb68401d81906eae73c02b40d5ec1a141962c592d0f11a96f",
+        "sourceDownloadSha256": "c2d7c3df0e7d94efb68401d81906eae73c02b40d5ec1a141962c592d0f11a96f",
+        "sourceMatchesLockChecksum": true,
+        "sourceIncludesMplText": false
+      },
+      {
+        "name": "symphonia-metadata",
+        "version": "0.5.5",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "36306ff42b9ffe6e5afc99d49e121e0bd62fe79b9db7b9681d48e29fa19e6b16",
+        "sourceDownloadSha256": "36306ff42b9ffe6e5afc99d49e121e0bd62fe79b9db7b9681d48e29fa19e6b16",
+        "sourceMatchesLockChecksum": true,
+        "sourceIncludesMplText": false
+      },
+      {
+        "name": "symphonia-utils-xiph",
+        "version": "0.5.5",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "ee27c85ab799a338446b68eec77abf42e1a6f1bb490656e121c6e27bfbab9f16",
+        "sourceDownloadSha256": "ee27c85ab799a338446b68eec77abf42e1a6f1bb490656e121c6e27bfbab9f16",
+        "sourceMatchesLockChecksum": true,
+        "sourceIncludesMplText": false
+      }
+    ],
+    "docs/brand/LICENSE-brand.txtSha256": "7ee27fdb49f96a969ab80d5f800d8422aa17cb39d1cca286d18aa6227d8c7628"
+  },
+  {
+    "id": "designcraft",
+    "version": "0.14.0",
+    "archiveSha256": "7d7e5f24d49b07be6c21d9b571f7edd3763bc9f9dd72a9a1dcc61ebd63bcc6bb",
+    "matchesPin": true,
+    "noticeSha256": "cd88e55637a6aa3f49e4629b83e856e94cd6d028d44ca75f12878f0c564d622e",
+    "noticeFiles": [
+      "OFL-shippori-mincho.txt",
+      "LICENSE-MIT",
+      "OFL-noto-sans-hebrew.txt",
+      "OFL-biz-ud-mincho.txt",
+      "LICENSE-APACHE",
+      "OFL-noto-sans-georgian.txt",
+      "OFL-biz-ud-pgothic.txt",
+      "OFL-noto-sans-symbols-2.txt",
+      "OFL-noto-sans-symbols.txt",
+      "OFL-noto-sans-cjk-sc.txt",
+      "OFL-noto-sans-arabic.txt",
+      "OFL-noto-sans-devanagari.txt",
+      "NOTICE",
+      "OFL-noto-sans-thai.txt",
+      "OFL-lxgw-wenkai-lite.txt",
+      "OFL-nanum-gothic.txt"
+    ],
+    "source": "https://github.com/storytold/designcraft/tree/v0.14.0",
+    "brandTerms": "https://github.com/storytold/designcraft/blob/v0.14.0/docs/brand/LICENSE-brand.txt",
+    "Cargo.lockSha256": "9729dda0cb85d01d43c3b71b6d7a0f4221886bfaeb4087c51d2779c3cb355700",
+    "mplSourceCandidates": [],
+    "docs/brand/LICENSE-brand.txtSha256": "68fb0e786130f8ead0350a352f66d7027d0f8a8ebebcf30d51de9146405f670e"
+  },
+  {
+    "id": "cadcraft",
+    "version": "0.14.0",
+    "archiveSha256": "f2fbfb80388dc0315a469d65cf7c966b742f86b6b4d3d405752bdee7428d94e8",
+    "matchesPin": true,
+    "noticeSha256": "8f6f3c12b194374bb221e2a788565e1799dcf05d704f77a5cd8f09531eaa4bdd",
+    "noticeFiles": [
+      "NOTICE",
+      "ATTRIBUTION.md",
+      "LICENSE-MIT",
+      "LICENSE-APACHE"
+    ],
+    "source": "https://github.com/storytold/cadcraft/tree/v0.14.0",
+    "brandTerms": "https://github.com/storytold/cadcraft/blob/v0.14.0/docs/brand/LICENSE-brand.txt",
+    "Cargo.lockSha256": "71149a13f9e32f0f8bd62a67954c8b501ce04d1f8ac4f3a71f2ab356125fe5e1",
+    "mplSourceCandidates": [
+      {
+        "name": "acadrust",
+        "version": "0.6.6",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "8923c99ea1f151cb7fc17ce2fc14f8b1e330fa22611e535602d985c0cc3c89a2",
+        "sourceDownloadSha256": "8923c99ea1f151cb7fc17ce2fc14f8b1e330fa22611e535602d985c0cc3c89a2",
+        "sourceMatchesLockChecksum": true,
+        "sourceIncludesMplText": true
+      }
+    ],
+    "docs/brand/LICENSE-brand.txtSha256": "382b7443d4346ba31115a9d7a1f3fcfc16e44c39c94654b01998e09cef8a2679"
+  },
+  {
+    "id": "figcraft",
+    "version": "0.12.1",
+    "archiveSha256": "8f52f52d4897d35b14c2a347c44ab6362b60b93d6a2f54a17d218111b9006c37",
+    "matchesPin": true,
+    "noticeSha256": "0595c3310afc53ce46252fe4c5a1ac4f048ef771978603b3fe2464a753a20003",
+    "noticeFiles": [
+      "OFL-shippori-mincho.txt",
+      "LICENSE-MIT",
+      "OFL-liberation-mono.txt",
+      "OFL-lato.txt",
+      "OFL-noto-sans-hebrew.txt",
+      "OFL-biz-ud-mincho.txt",
+      "LICENSE-APACHE",
+      "OFL-noto-sans-georgian.txt",
+      "OFL-biz-ud-pgothic.txt",
+      "OFL-noto-sans-symbols-2.txt",
+      "OFL-noto-sans-symbols.txt",
+      "OFL-noto-sans-cjk-sc.txt",
+      "OFL-source-sans-3.txt",
+      "OFL-poppins.txt",
+      "OFL-inter.txt",
+      "OFL-liberation-serif.txt",
+      "OFL-carlito.txt",
+      "OFL-noto-sans-arabic.txt",
+      "OFL-montserrat.txt",
+      "OFL-caladea.txt",
+      "OFL-playfair-display.txt",
+      "OFL-roboto.txt",
+      "OFL-nunito-sans.txt",
+      "OFL-noto-sans-devanagari.txt",
+      "NOTICE",
+      "OFL-open-sans.txt",
+      "OFL-liberation-sans.txt",
+      "OFL-merriweather.txt",
+      "OFL-noto-sans-thai.txt",
+      "OFL-source-serif-4.txt",
+      "OFL-lxgw-wenkai-lite.txt",
+      "OFL-nanum-gothic.txt"
+    ],
+    "source": "https://github.com/storytold/figcraft/tree/v0.12.1",
+    "brandTerms": "https://github.com/storytold/figcraft/blob/v0.12.1/docs/brand/LICENSE-brand.txt",
+    "Cargo.lockSha256": "b2df3c125faabbc1fc7c808f8941f8424e9660927959f863345bb94d618fec6e",
+    "mplSourceCandidates": [],
+    "docs/brand/LICENSE-brand.txtSha256": "904f8307a25cbb220f949846d84561aee9bf8f0cdd64380362f07ee674d80323"
+  }
+]

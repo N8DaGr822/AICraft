@@ -1,0 +1,122 @@
+AICraft third-party source and license references
+Reviewed 2026-10-30; original AICraft code: MIT, copyright 2026 Nathen Lentz.
+Third-party components, assets, fonts and marks retain their own terms.
+These references supplement, and do not replace, the bundled upstream notices.
+
+wordcraft 0.12.0
+Source: https://github.com/storytold/wordcraft/tree/v0.12.0
+Brand terms (separate from code): https://github.com/storytold/wordcraft/blob/v0.12.0/docs/brand/LICENSE-brand.txt
+Release SHA-256: 4cf6808b762e6d1211a569dd0cac831b7f1e7eb1a41f70cae90bceeb2c6a6acf
+
+gridcraft 0.13.0
+Source: https://github.com/storytold/gridcraft/tree/v0.13.0
+Brand terms (separate from code): https://github.com/storytold/gridcraft/blob/v0.13.0/docs/brand/LICENSE-brand.txt
+Release SHA-256: e232edde1898459f13568ca7b1f3feecb4037f0cbb8f6aec86de1a3c096af5dc
+
+deckcraft 0.12.0
+Source: https://github.com/storytold/deckcraft/tree/v0.12.0
+Brand terms (separate from code): https://github.com/storytold/deckcraft/blob/v0.12.0/docs/brand/LICENSE-brand.txt
+Release SHA-256: 4625fc2b66f0a0065b1cd549d94dd51f4e0f4f6082638d399c530ffdc56ebab5
+Source candidate from release Cargo.lock: https://crates.io/crates/symphonia/0.5.5 (verify actual compiled inclusion; acadrust/Symphonia families use MPL-2.0)
+Source candidate from release Cargo.lock: https://crates.io/crates/symphonia-bundle-flac/0.5.5 (verify actual compiled inclusion; acadrust/Symphonia families use MPL-2.0)
+Source candidate from release Cargo.lock: https://crates.io/crates/symphonia-bundle-mp3/0.5.5 (verify actual compiled inclusion; acadrust/Symphonia families use MPL-2.0)
+Source candidate from release Cargo.lock: https://crates.io/crates/symphonia-codec-aac/0.5.5 (verify actual compiled inclusion; acadrust/Symphonia families use MPL-2.0)
+Source candidate from release Cargo.lock: https://crates.io/crates/symphonia-codec-adpcm/0.5.5 (verify actual compiled inclusion; acadrust/Symphonia families use MPL-2.0)
+Source candidate from release Cargo.lock: https://crates.io/crates/symphonia-codec-alac/0.5.5 (verify actual compiled inclusion; acadrust/Symphonia families use MPL-2.0)
+Source candidate from release Cargo.lock: https://crates.io/crates/symphonia-codec-pcm/0.5.5 (verify actual compiled inclusion; acadrust/Symphonia families use MPL-2.0)
+Source candidate from release Cargo.lock: https://crates.io/crates/symphonia-codec-vorbis/0.5.5 (verify actual compiled inclusion; acadrust/Symphonia families use MPL-2.0)
+Source candidate from release Cargo.lock: https://crates.io/crates/symphonia-core/0.5.5 (verify actual compiled inclusion; acadrust/Symphonia families use MPL-2.0)
+Source candidate from release Cargo.lock: https://crates.io/crates/symphonia-format-caf/0.5.5 (verify actual compiled inclusion; acadrust/Symphonia families use MPL-2.0)
+Source candidate from release Cargo.lock: https://crates.io/crates/symphonia-format-isomp4/0.5.5 (verify actual compiled inclusion; acadrust/Symphonia families use MPL-2.0)
+Source candidate from release Cargo.lock: https://crates.io/crates/symphonia-format-mkv/0.5.5 (verify actual compiled inclusion; acadrust/Symphonia families use MPL-2.0)
+Source candidate from release Cargo.lock: https://crates.io/crates/symphonia-format-ogg/0.5.5 (verify actual compiled inclusion; acadrust/Symphonia families use MPL-2.0)
+Source candidate from release Cargo.lock: https://crates.io/crates/symphonia-format-riff/0.5.5 (verify actual compiled inclusion; acadrust/Symphonia families use MPL-2.0)
+Source candidate from release Cargo.lock: https://crates.io/crates/symphonia-metadata/0.5.5 (verify actual compiled inclusion; acadrust/Symphonia families use MPL-2.0)
+Source candidate from release Cargo.lock: https://crates.io/crates/symphonia-utils-xiph/0.5.5 (verify actual compiled inclusion; acadrust/Symphonia families use MPL-2.0)
+
+soundcraft 0.14.0
+Source: https://github.com/storytold/soundcraft/tree/v0.14.0
+Brand terms (separate from code): https://github.com/storytold/soundcraft/blob/v0.14.0/docs/brand/LICENSE-brand.txt
+Release SHA-256: 76290a220377d80aa62a3a196c8bcc8b28e01eaf5b0aad912fabf7eb5a9a767d
+Source candidate from release Cargo.lock: https://crates.io/crates/symphonia/0.6.1 (verify actual compiled inclusion; acadrust/Symphonia families use MPL-2.0)
+Source candidate from release Cargo.lock: https://crates.io/crates/symphonia-bundle-flac/0.6.1 (verify actual compiled inclusion; acadrust/Symphonia families use MPL-2.0)
+Source candidate from release Cargo.lock: https://crates.io/crates/symphonia-bundle-mp3/0.6.1 (verify actual compiled inclusion; acadrust/Symphonia families use MPL-2.0)
+Source candidate from release Cargo.lock: https://crates.io/crates/symphonia-codec-aac/0.6.1 (verify actual compiled inclusion; acadrust/Symphonia families use MPL-2.0)
+Source candidate from release Cargo.lock: https://crates.io/crates/symphonia-codec-adpcm/0.6.1 (verify actual compiled inclusion; acadrust/Symphonia families use MPL-2.0)
+Source candidate from release Cargo.lock: https://crates.io/crates/symphonia-codec-alac/0.6.1 (verify actual compiled inclusion; acadrust/Symphonia families use MPL-2.0)
+Source candidate from release Cargo.lock: https://crates.io/crates/symphonia-codec-pcm/0.6.1 (verify actual compiled inclusion; acadrust/Symphonia families use MPL-2.0)
+Source candidate from release Cargo.lock: https://crates.io/crates/symphonia-codec-vorbis/0.6.1 (verify actual compiled inclusion; acadrust/Symphonia families use MPL-2.0)
+Source candidate from release Cargo.lock: https://crates.io/crates/symphonia-common/0.6.1 (verify actual compiled inclusion; acadrust/Symphonia families use MPL-2.0)
+Source candidate from release Cargo.lock: https://crates.io/crates/symphonia-core/0.6.1 (verify actual compiled inclusion; acadrust/Symphonia families use MPL-2.0)
+Source candidate from release Cargo.lock: https://crates.io/crates/symphonia-format-caf/0.6.1 (verify actual compiled inclusion; acadrust/Symphonia families use MPL-2.0)
+Source candidate from release Cargo.lock: https://crates.io/crates/symphonia-format-isomp4/0.6.1 (verify actual compiled inclusion; acadrust/Symphonia families use MPL-2.0)
+Source candidate from release Cargo.lock: https://crates.io/crates/symphonia-format-mkv/0.6.1 (verify actual compiled inclusion; acadrust/Symphonia families use MPL-2.0)
+Source candidate from release Cargo.lock: https://crates.io/crates/symphonia-format-ogg/0.6.1 (verify actual compiled inclusion; acadrust/Symphonia families use MPL-2.0)
+Source candidate from release Cargo.lock: https://crates.io/crates/symphonia-format-riff/0.6.1 (verify actual compiled inclusion; acadrust/Symphonia families use MPL-2.0)
+Source candidate from release Cargo.lock: https://crates.io/crates/symphonia-metadata/0.6.1 (verify actual compiled inclusion; acadrust/Symphonia families use MPL-2.0)
+
+filmcraft 0.14.0
+Source: https://github.com/storytold/filmcraft/tree/v0.14.0
+Brand terms (separate from code): https://github.com/storytold/filmcraft/blob/v0.14.0/docs/brand/LICENSE-brand.txt
+Release SHA-256: 58140e222600c3fbb8ab5fdb94b95abf31cf13d2ad057182b7a6b64843a7a330
+Source candidate from release Cargo.lock: https://crates.io/crates/symphonia/0.5.5 (verify actual compiled inclusion; acadrust/Symphonia families use MPL-2.0)
+Source candidate from release Cargo.lock: https://crates.io/crates/symphonia-bundle-flac/0.5.5 (verify actual compiled inclusion; acadrust/Symphonia families use MPL-2.0)
+Source candidate from release Cargo.lock: https://crates.io/crates/symphonia-bundle-mp3/0.5.5 (verify actual compiled inclusion; acadrust/Symphonia families use MPL-2.0)
+Source candidate from release Cargo.lock: https://crates.io/crates/symphonia-codec-aac/0.5.5 (verify actual compiled inclusion; acadrust/Symphonia families use MPL-2.0)
+Source candidate from release Cargo.lock: https://crates.io/crates/symphonia-codec-alac/0.5.5 (verify actual compiled inclusion; acadrust/Symphonia families use MPL-2.0)
+Source candidate from release Cargo.lock: https://crates.io/crates/symphonia-codec-pcm/0.5.5 (verify actual compiled inclusion; acadrust/Symphonia families use MPL-2.0)
+Source candidate from release Cargo.lock: https://crates.io/crates/symphonia-codec-vorbis/0.5.5 (verify actual compiled inclusion; acadrust/Symphonia families use MPL-2.0)
+Source candidate from release Cargo.lock: https://crates.io/crates/symphonia-core/0.5.5 (verify actual compiled inclusion; acadrust/Symphonia families use MPL-2.0)
+Source candidate from release Cargo.lock: https://crates.io/crates/symphonia-format-isomp4/0.5.5 (verify actual compiled inclusion; acadrust/Symphonia families use MPL-2.0)
+Source candidate from release Cargo.lock: https://crates.io/crates/symphonia-format-ogg/0.5.5 (verify actual compiled inclusion; acadrust/Symphonia families use MPL-2.0)
+Source candidate from release Cargo.lock: https://crates.io/crates/symphonia-format-riff/0.5.5 (verify actual compiled inclusion; acadrust/Symphonia families use MPL-2.0)
+Source candidate from release Cargo.lock: https://crates.io/crates/symphonia-metadata/0.5.5 (verify actual compiled inclusion; acadrust/Symphonia families use MPL-2.0)
+Source candidate from release Cargo.lock: https://crates.io/crates/symphonia-utils-xiph/0.5.5 (verify actual compiled inclusion; acadrust/Symphonia families use MPL-2.0)
+
+lightcraft 0.15.0
+Source: https://github.com/storytold/lightcraft/tree/v0.15.0
+Brand terms (separate from code): https://github.com/storytold/lightcraft/blob/v0.15.0/docs/brand/LICENSE-brand.txt
+Release SHA-256: fb46de80ad77814ea33efa3d2799edbaca3462c96da88347fb874f4d6fd15564
+
+effectcraft 0.18.0
+Source: https://github.com/storytold/effectcraft/tree/v0.18.0
+Brand terms (separate from code): https://github.com/storytold/effectcraft/blob/v0.18.0/docs/brand/LICENSE-brand.txt
+Release SHA-256: cc3326670a37a62499b132d20773016d20f576714aaf6b4946744ae6876fa2aa
+Source candidate from release Cargo.lock: https://crates.io/crates/symphonia/0.5.5 (verify actual compiled inclusion; acadrust/Symphonia families use MPL-2.0)
+Source candidate from release Cargo.lock: https://crates.io/crates/symphonia-bundle-flac/0.5.5 (verify actual compiled inclusion; acadrust/Symphonia families use MPL-2.0)
+Source candidate from release Cargo.lock: https://crates.io/crates/symphonia-bundle-mp3/0.5.5 (verify actual compiled inclusion; acadrust/Symphonia families use MPL-2.0)
+Source candidate from release Cargo.lock: https://crates.io/crates/symphonia-codec-aac/0.5.5 (verify actual compiled inclusion; acadrust/Symphonia families use MPL-2.0)
+Source candidate from release Cargo.lock: https://crates.io/crates/symphonia-codec-alac/0.5.5 (verify actual compiled inclusion; acadrust/Symphonia families use MPL-2.0)
+Source candidate from release Cargo.lock: https://crates.io/crates/symphonia-codec-pcm/0.5.5 (verify actual compiled inclusion; acadrust/Symphonia families use MPL-2.0)
+Source candidate from release Cargo.lock: https://crates.io/crates/symphonia-codec-vorbis/0.5.5 (verify actual compiled inclusion; acadrust/Symphonia families use MPL-2.0)
+Source candidate from release Cargo.lock: https://crates.io/crates/symphonia-core/0.5.5 (verify actual compiled inclusion; acadrust/Symphonia families use MPL-2.0)
+Source candidate from release Cargo.lock: https://crates.io/crates/symphonia-format-isomp4/0.5.5 (verify actual compiled inclusion; acadrust/Symphonia families use MPL-2.0)
+Source candidate from release Cargo.lock: https://crates.io/crates/symphonia-format-ogg/0.5.5 (verify actual compiled inclusion; acadrust/Symphonia families use MPL-2.0)
+Source candidate from release Cargo.lock: https://crates.io/crates/symphonia-format-riff/0.5.5 (verify actual compiled inclusion; acadrust/Symphonia families use MPL-2.0)
+Source candidate from release Cargo.lock: https://crates.io/crates/symphonia-metadata/0.5.5 (verify actual compiled inclusion; acadrust/Symphonia families use MPL-2.0)
+Source candidate from release Cargo.lock: https://crates.io/crates/symphonia-utils-xiph/0.5.5 (verify actual compiled inclusion; acadrust/Symphonia families use MPL-2.0)
+
+designcraft 0.14.0
+Source: https://github.com/storytold/designcraft/tree/v0.14.0
+Brand terms (separate from code): https://github.com/storytold/designcraft/blob/v0.14.0/docs/brand/LICENSE-brand.txt
+Release SHA-256: 7d7e5f24d49b07be6c21d9b571f7edd3763bc9f9dd72a9a1dcc61ebd63bcc6bb
+
+cadcraft 0.14.0
+Source: https://github.com/storytold/cadcraft/tree/v0.14.0
+Brand terms (separate from code): https://github.com/storytold/cadcraft/blob/v0.14.0/docs/brand/LICENSE-brand.txt
+Release SHA-256: f2fbfb80388dc0315a469d65cf7c966b742f86b6b4d3d405752bdee7428d94e8
+Source candidate from release Cargo.lock: https://crates.io/crates/acadrust/0.6.6 (verify actual compiled inclusion; acadrust/Symphonia families use MPL-2.0)
+
+figcraft 0.12.1
+Source: https://github.com/storytold/figcraft/tree/v0.12.1
+Brand terms (separate from code): https://github.com/storytold/figcraft/blob/v0.12.1/docs/brand/LICENSE-brand.txt
+Release SHA-256: 8f52f52d4897d35b14c2a347c44ab6362b60b93d6a2f54a17d218111b9006c37
+
+EffectCraft: AICraft patches index.html to prefer WebGL and supplies noworkers/nosw URL flags. WASM payload and upstream notices are preserved.
+LightCraft: upstream NOTICE describes Apache-only segmentation code and optional user-triggered model and GeoNames downloads with separate terms. No model-license rights are granted by AICraft.
+Custom labs: pinned source revisions and dependency notices are documented in THIRD-PARTY-NOTICES.md in the AICraft repository.
+
+MPL-2.0 text: Symphonia-LICENSE-MPL-2.0.txt
+Retrieved from https://raw.githubusercontent.com/pdeljanov/Symphonia/v0.5.5/LICENSE
+SHA-256: c76f740d1521b9bed9ca7a04ad526c310493c62621b1341d623b431736533b30
+Symphonia 0.5.5 source packages declare MPL-2.0 but do not include a standalone license file; the versioned upstream repository supplies it.

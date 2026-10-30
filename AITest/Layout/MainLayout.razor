@@ -1,4 +1,6 @@
 ﻿@inherits LayoutComponentBase
+@inject NavigationManager Navigation
+<a class="skip-link" href="@(Navigation.Uri.Split('#')[0] + "#main-content")">Skip to content</a>
 <div class="page">
     <div class="sidebar">
         <NavMenu />
@@ -9,8 +11,9 @@
             <a href="https://github.com/N8DaGr822/AICraft" target="_blank" rel="noopener noreferrer">Project &amp; documentation</a>
         </div>
 
-        <article class="content px-4">
+        <article id="main-content" tabindex="-1" class="content px-4">
             @Body
+            <footer class="directory-footer"><a target="_top" href="about/">About</a><a target="_top" href="contact/">Contact &amp; feedback</a><a target="_top" href="privacy/">Privacy</a><a target="_top" href="terms/">Terms</a><a target="_top" href="licenses/AICraft-LICENSE-MIT.txt">AICraft license</a><a target="_top" href="licenses/AICraft-THIRD-PARTY-SOURCES.txt">Third-party terms</a><a href="https://github.com/N8DaGr822/AICraft">Source</a></footer>
         </article>
     </main>
 </div>
