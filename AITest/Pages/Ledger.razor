@@ -4,9 +4,9 @@
 
 <PageTitle>AICraft · Ledger Reborn</PageTitle>
 <h1>Ledger Reborn</h1>
-<p class="lead">A small accounting workflow, running entirely in your browser.</p>
-<p>Try synthetic data first. This lab supports service invoices, payments into Bank, and accrual reports. No tax, payroll, inventory, or bank connection is included.</p>
-<p>Changes are saved in this browser on this device. Clearing site data removes them. Download backups to keep a separate copy. The first launch downloads the pinned Python runtime from jsDelivr; ledger data is not uploaded.</p>
+<p class="lead">Local bookkeeping with an optional connected bank feed.</p>
+<p>Try synthetic data first. This lab supports service invoices, payments into Bank, and accrual reports. The Bank section also provides a separately configured connected-bank feed. Payroll and inventory are not included.</p>
+<p>Local ledger changes are saved in this browser on this device. Clearing site data removes them. Download backups to keep a separate copy. The first launch downloads Python from jsDelivr. The optional bank feed uses Microsoft sign-in, Plaid, and your Azure API/SQL database; it is separate from the local ledger.</p>
 @if (error is not null) { <div class="alert alert-danger" role="alert">@error</div> }
 <p role="status" aria-live="polite">@status</p>
 <button class="btn btn-outline-secondary mb-3" disabled="@busy" @onclick="Start">Open / reopen ledger</button>
@@ -22,7 +22,8 @@
     <button class="btn btn-outline-primary" disabled="@busy" @onclick="Refresh">Refresh balances</button>
     <small>Displayed balances: @loadedReportDate. Invoice balances are current.</small>
 </div>
-@if (snapshot is null && activeTab != "Transactions") { <p>Open the ledger to display your saved accounts and transactions.</p> }
+@if (activeTab == "Bank") { <BankFeed /> }
+@if (snapshot is null && activeTab != "Transactions") { <p>Open the ledger to display your saved local accounts and posted transactions.</p> }
 @if (snapshot is not null && activeTab == "Overview")
 {
     <div class="ledger-grid mb-3">

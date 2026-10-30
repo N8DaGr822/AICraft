@@ -43,6 +43,7 @@ jobs:
           node scripts/test-vector-wasm.mjs
           node scripts/test-photo-geometry.mjs
           node scripts/test-vector-scene.mjs
+          node --experimental-vm-modules scripts/test-bank-feed.mjs
       - uses: actions/upload-artifact@v4
         with:
           name: pdf-test-output
@@ -62,6 +63,9 @@ jobs:
         run: |
           python3 scripts/test-craft-bundles.py
           python3 scripts/install-craft-apps.py publish/wwwroot/craft
+      - name: Install verified Tax Reborn browser app and source
+        shell: pwsh
+        run: ./scripts/install-tax-app.ps1 publish/wwwroot/tax-reborn
       - uses: actions/upload-pages-artifact@v3
         with:
           path: publish/wwwroot

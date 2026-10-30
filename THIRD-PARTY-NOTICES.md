@@ -1,5 +1,9 @@
 # Third-party notices
 
+Tax Reborn's unmodified browser interface is installed from the checksum-pinned 2026.10.16-preview.39 source release at https://github.com/lxistired/tax-reborn under AGPL-3.0-only. The deployed tax-reborn/2026.10.16-preview.39/ directory provides the AGPL license and complete corresponding-source.zip, including dependency source and notices. Its browser runtime and assets retain upstream terms. The host does not claim tax correctness, electronic filing, native feature parity, or affiliation.
+
+The optional bank feed loads Microsoft MSAL Browser 3.28.1 (MIT) from jsDelivr and Plaid Link from Plaid's hosted distribution. Provider services and hosted code retain their own terms. ASP.NET Core, Entity Framework Core and other server package notices are supplied with their NuGet distributions.
+
 Original AICraft host and integration code is copyright (c) 2026 Nathen Lentz, licensed under MIT (see LICENSE). This grant does not relicense third-party code, fonts, trademarks or other assets. Their existing licenses and notices remain applicable.
 
 This application uses unmodified PhotoCraft Rust crates from https://github.com/storytold/photocraft at c645d5fcc92c4bdd0d925084450699d05a184850.

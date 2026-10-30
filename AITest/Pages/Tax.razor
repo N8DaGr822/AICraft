@@ -1,0 +1,18 @@
+@page "/tax"
+
+<PageTitle>AICraft · Tax Reborn</PageTitle>
+<div class="tax-heading"><h1>Tax Reborn</h1><a href="@BundleUrl" target="_blank" rel="noopener">Standalone editor</a></div>
+<p>Experimental US tax year 2025 preparation. No electronic filing. Save or export before leaving.</p>
+@* Runtime Ownership: Removing this frame releases the upstream editor and its workers. *@
+<iframe class="tax-editor" src="@BundleUrl" title="Tax Reborn browser editor"></iframe>
+<details><summary>Help &amp; notices</summary>
+    <p>The full upstream browser interface runs in offline mode, using local browser storage. Clearing site data can remove saved returns. Native desktop features and full original .tax compatibility are not included.</p>
+    <a href="@(BundleRoot + "/third-party-notices/Tax-Reborn-AGPL-3.0.txt")">AGPL-3.0 license</a> ·
+    <a href="@(BundleRoot + "/corresponding-source.zip")">Complete corresponding source &amp; dependency notices</a> ·
+    <a href="https://github.com/lxistired/tax-reborn/releases/tag/v2026.10.16-preview.39">Upstream release</a>
+</details>
+
+@code {
+    private const string BundleRoot = "tax-reborn/2026.10.16-preview.39";
+    private const string BundleUrl = BundleRoot + "/index.html?offline=1";
+}

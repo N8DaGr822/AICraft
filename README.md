@@ -125,3 +125,11 @@ Canonical URLs currently use `https://n8dagr822.github.io` plus the deployment b
 Deployment: select GitHub Actions under repository Settings > Pages, review the changes, then push/merge to main. The existing workflow builds engines, runs tests, publishes Blazor, generates discovery pages, installs verified editor bundles and deploys. No deployment was triggered during this local implementation. Before promotion, test the deployed homepage, each landing page, editor launch and refresh, and upstream NOTICE URLs.
 
 See `Docs/Launch/` for submission drafts, screenshot tasks, launch checklist and a proposed announcement schedule. Licensing, CAD startup, upstream privacy auditing and cross-browser/mobile validation remain launch review items. No platform-wide open-source claim is made.
+
+## Tax Reborn and connected bank feed
+
+`/tax` hosts the complete upstream Tax Reborn browser interface in offline mode, pinned to `2026.10.16-preview.39`. Run `pwsh -File scripts/install-tax-app.ps1` for local use. The installer verifies the published source archive's size and SHA-256, preserves browser assets, includes the runtime resources used by upstream's native packaging, and serves the complete source ZIP and AGPL license beside the editor. Pages CI installs it after Blazor publication. This is an experimental tax year 2025 tool with no electronic filing; native-only features are not ported. Its data is independent of Ledger.
+
+Ledger's Bank section now has an optional Microsoft-authenticated Plaid feed backed by an ASP.NET Core API and Azure SQL. It supports connection/reconnection, manual sync, account selection, paged transaction review, sign-out and disconnect/delete. The imported feed does not post local accounting entries. Public configuration defaults to disabled until Azure and provider settings are supplied. CommunityAmerica (USA) is the intended bank; live Transactions coverage still needs verification in Plaid. See [Bank API setup](BankApi/README.md) for deployment, credentials, schema and acceptance requirements. The API deploys separately from GitHub Pages.
+
+Run `dotnet run --project BankApi.Tests/BankApi.Tests.csproj` for encryption, sync, authorization and user-isolation checks. Azure SQL concurrency and real-provider OAuth require deployment testing.

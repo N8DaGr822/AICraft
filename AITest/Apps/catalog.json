@@ -1,5 +1,28 @@
 [
   {
+    "Name": "Tax Reborn",
+    "Route": "tax",
+    "Runtime": "Python · Pyodide",
+    "Description": "Prepare a US tax year 2025 return with Tax Reborn's full browser interface.",
+    "Icon": "bi-list-nested-nav-menu",
+    "Version": "2026.10.16-preview.39",
+    "Workflow": "Enter information, review calculations, save locally, and export preparation records.",
+    "Id": "tax",
+    "Slug": "tax",
+    "Category": "Productivity and Office",
+    "ComparableSoftware": "Personal tax preparation tools (experimental 2025 preview)",
+    "Features": ["Full upstream browser interface", "Local saved returns and document review", "Federal calculations, state drafts and preparation exports"],
+    "Limitations": "Experimental tax year 2025 preview. No electronic filing. Native features and full original .tax compatibility are not supported. Large initial runtime download.",
+    "License": "Tax Reborn: AGPL-3.0-only. Complete corresponding source and dependency notices are available alongside the editor.",
+    "LicenseUrl": "tax-reborn/2026.10.16-preview.39/third-party-notices/Tax-Reborn-AGPL-3.0.txt",
+    "SourceUrl": "https://github.com/lxistired/tax-reborn",
+    "Access": "Free browser interface; no AICraft account required.",
+    "Featured": false,
+    "DateAdded": "2026-10-30",
+    "PreviewImage": null,
+    "DataHandling": "Offline mode uses local browser storage. Export backups before clearing site data. Embedded editors share the site's origin."
+  },
+  {
     "Name": "Photo lab",
     "Route": "photo",
     "Runtime": "Rust · WebAssembly",
@@ -97,15 +120,15 @@
       "Account registers, trial balance and accrual profit reports",
       "Browser-local storage and SQLite backup export"
     ],
-    "Limitations": "Use synthetic data. No tax, payroll, inventory, live bank connection or backup restoration. Browser storage may be cleared; download backups.",
+    "Limitations": "Experimental local ledger. Connected-bank review requires a separately configured Azure API, Microsoft sign-in and Plaid account. Imported feed does not post accounting entries. No payroll, inventory or backup restoration.",
     "License": "Ledger Reborn engine: MIT. AICraft integration: MIT.",
     "LicenseUrl": "licenses/LedgerReborn-LICENSE.txt",
     "SourceUrl": "https://github.com/lxistired/ledger-reborn",
-    "Access": "Free to use in your browser. No AICraft account or subscription required.",
+    "Access": "Local ledger is free without sign-in. Optional bank feed requires Microsoft sign-in and configured Azure/Plaid services; provider costs may apply.",
     "Featured": false,
     "DateAdded": "2026-10-29",
     "PreviewImage": null,
-    "DataHandling": "Ledger records are stored in IndexedDB on this browser. Opening the ledger downloads Pyodide from jsDelivr. Ledger data is not uploaded."
+    "DataHandling": "Local ledger records stay in IndexedDB. The optional connected-bank feed uses Microsoft sign-in, Plaid and your Azure API/SQL database. Bank access tokens are encrypted on the server; disconnect deletes the imported feed."
   },
   {
     "Name": "WordCraft",

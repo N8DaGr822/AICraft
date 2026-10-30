@@ -1,0 +1,23 @@
+name: Build and test bank API
+on:
+  push:
+    paths: ['BankApi/**', 'BankApi.Tests/**', 'BankApi.slnx', '.github/workflows/bank-api.yml']
+  pull_request:
+    paths: ['BankApi/**', 'BankApi.Tests/**', 'BankApi.slnx', '.github/workflows/bank-api.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+      - run: dotnet run --project BankApi.Tests/BankApi.Tests.csproj -c Release
+      - run: dotnet publish BankApi/BankApi.csproj -c Release -o publish/bank-api
+      - uses: actions/upload-artifact@v4
+        with:
+          name: bank-api
+          path: publish/bank-api

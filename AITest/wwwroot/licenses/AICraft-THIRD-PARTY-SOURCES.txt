@@ -1,4 +1,12 @@
 AICraft third-party source and license references
+
+Tax Reborn 2026.10.16-preview.39: AGPL-3.0-only.
+Source: https://github.com/lxistired/tax-reborn/releases/tag/v2026.10.16-preview.39
+Complete corresponding source and dependency notices: ../tax-reborn/2026.10.16-preview.39/corresponding-source.zip
+License: ../tax-reborn/2026.10.16-preview.39/third-party-notices/Tax-Reborn-AGPL-3.0.txt
+The browser interface is preserved unmodified and runs with offline=1.
+Microsoft MSAL Browser 3.28.1: MIT; https://github.com/AzureAD/microsoft-authentication-library-for-js
+Plaid Link: hosted by Plaid; https://plaid.com/docs/link/
 Reviewed 2026-10-30; original AICraft code: MIT, copyright 2026 Nathen Lentz.
 Third-party components, assets, fonts and marks retain their own terms.
 These references supplement, and do not replace, the bundled upstream notices.
