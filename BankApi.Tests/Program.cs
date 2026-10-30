@@ -60,6 +60,7 @@ internal static class TestRunner
         Check((await db.Connections.SingleAsync()).Cursor == "final" && !await db.Transactions.AnyAsync(x => x.Id == "failed"), "Failed sync leaves saved cursor and transactions intact");
         Console.WriteLine("Bank sync and token encryption checks passed. SQL rowversion behavior requires Azure SQL integration verification.");
         await AuthorizationChecks.Run();
+        await JwtChecks.Run();
     }
 
     static void Check(bool condition, string message) { if (!condition) throw new Exception(message); }

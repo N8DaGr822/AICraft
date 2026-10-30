@@ -32,7 +32,18 @@ internal static class AuthorizationChecks
         client.DefaultRequestHeaders.Add("Test-User", "owner");
         await Expect(HttpStatusCode.Forbidden, "/api/bank/connections");
         client.DefaultRequestHeaders.Add("Test-Scope", "access_as_user");
+        await Expect(HttpStatusCode.Forbidden, "/api/bank/connections");
+        client.DefaultRequestHeaders.Add("Test-Client", "old-editor-client");
+        await Expect(HttpStatusCode.Forbidden, "/api/bank/connections");
+        client.DefaultRequestHeaders.Remove("Test-Client");
+        client.DefaultRequestHeaders.Add("Test-Client", "bank-client");
         await Expect(HttpStatusCode.OK, "/api/bank/connections");
+        await Expect(HttpStatusCode.BadRequest, $"/api/bank/connections/{id}/transactions?offset=-1");
+        await Expect(HttpStatusCode.BadRequest, $"/api/bank/connections/{id}/transactions?offset=100001");
+        using var security = await client.GetAsync("/health");
+        if (security.Headers.GetValues("X-Frame-Options").Single() != "DENY"
+            || !security.Headers.GetValues("Content-Security-Policy").Single().Contains("frame-ancestors 'none'"))
+            throw new Exception("Banking isolation headers missing");
         var listing = await client.GetStringAsync("/api/bank/connections");
         if (listing.Contains("must-not-be-returned") || listing.Contains("protectedToken")) throw new Exception("Token leaked in API response");
         client.DefaultRequestHeaders.Remove("Test-User"); client.DefaultRequestHeaders.Add("Test-User", "other");
@@ -44,7 +55,15 @@ internal static class AuthorizationChecks
         if ((await client.GetAsync("/api/bank/connections")).StatusCode != HttpStatusCode.OK || await client.GetStringAsync("/api/bank/connections") != "[]") throw new Exception("Owner isolation failed");
         client.DefaultRequestHeaders.Remove("Test-User"); client.DefaultRequestHeaders.Add("Test-User", "outsider");
         await Expect(HttpStatusCode.Forbidden, "/api/bank/connections");
-        Console.WriteLine("API authorization, owner isolation and token non-disclosure checks passed.");
+        client.DefaultRequestHeaders.Remove("Test-User"); client.DefaultRequestHeaders.Add("Test-User", "owner");
+        var limited = false;
+        for (var attempt = 0; attempt < 61; attempt++)
+        {
+            using var response = await client.GetAsync("/api/bank/connections");
+            if (response.StatusCode == HttpStatusCode.TooManyRequests) { limited = true; break; }
+        }
+        if (!limited) throw new Exception("Per-owner request limit was not enforced");
+        Console.WriteLine("API authorization, client isolation, owner isolation, headers, paging bounds, rate limits and token non-disclosure checks passed.");
         async Task Expect(HttpStatusCode status, string path)
         {
             using var response = await client.GetAsync(path);
@@ -53,7 +72,7 @@ internal static class AuthorizationChecks
     }
 }
 
-internal sealed class BankFactory : WebApplicationFactory<global::Program>
+internal sealed class BankFactory(bool useJwt = false) : WebApplicationFactory<global::Program>
 {
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
@@ -62,6 +81,7 @@ internal sealed class BankFactory : WebApplicationFactory<global::Program>
         builder.ConfigureAppConfiguration((_, config) => config.AddInMemoryCollection(new Dictionary<string, string?>
         {
             ["Bank:EncryptionKey"] = Convert.ToBase64String(new byte[32]),
+            ["Authentication:AllowedClientIds:0"] = "bank-client",
             ["Authentication:AllowedObjectIds:0"] = "owner", ["Authentication:AllowedObjectIds:1"] = "other"
         }));
         builder.ConfigureServices(services =>
@@ -70,8 +90,9 @@ internal sealed class BankFactory : WebApplicationFactory<global::Program>
             services.RemoveAll<DbContextOptions<BankDb>>();
             services.RemoveAll<IDbContextOptionsConfiguration<BankDb>>();
             services.AddDbContext<BankDb>(options => options.UseInMemoryDatabase("authorization-test"));
-            services.AddAuthentication(options => { options.DefaultAuthenticateScheme = "Test"; options.DefaultChallengeScheme = "Test"; })
-                .AddScheme<AuthenticationSchemeOptions, TestAuthentication>("Test", _ => { });
+            if (useJwt) JwtChecks.Configure(services);
+            else services.AddAuthentication(options => { options.DefaultAuthenticateScheme = "Test"; options.DefaultChallengeScheme = "Test"; })
+                    .AddScheme<AuthenticationSchemeOptions, TestAuthentication>("Test", _ => { });
         });
     }
 }
@@ -81,7 +102,7 @@ internal sealed class TestAuthentication(IOptionsMonitor<AuthenticationSchemeOpt
     protected override Task<AuthenticateResult> HandleAuthenticateAsync()
     {
         if (!Request.Headers.TryGetValue("Test-User", out var user)) return Task.FromResult(AuthenticateResult.NoResult());
-        var identity = new ClaimsIdentity(new[] { new Claim("oid", user.ToString()), new Claim("scp", Request.Headers["Test-Scope"].ToString()) }, "Test");
+        var identity = new ClaimsIdentity(new[] { new Claim("azp", Request.Headers["Test-Client"].ToString()), new Claim("oid", user.ToString()), new Claim("scp", Request.Headers["Test-Scope"].ToString()) }, "Test");
         return Task.FromResult(AuthenticateResult.Success(new AuthenticationTicket(new ClaimsPrincipal(identity), "Test")));
     }
 }

@@ -1,10 +1,16 @@
 using System.Security.Claims;
+using System.Security.Cryptography;
+using System.Text;
 using System.Text.Json;
+using System.Text.RegularExpressions;
+using System.Threading.RateLimiting;
 using BankApi;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.WebHost.ConfigureKestrel(options => { options.AddServerHeader = false; options.Limits.MaxRequestBodySize = 16 * 1024; });
 builder.Services.AddDbContext<BankDb>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("Bank")));
 builder.Services.AddSingleton<TokenCipher>();
 builder.Services.AddHttpClient<PlaidClient>(client =>
@@ -29,19 +35,40 @@ builder.Services.AddAuthorization(options => options.AddPolicy("BankOwner", poli
     {
         var allowed = builder.Configuration.GetSection("Authentication:AllowedObjectIds").Get<string[]>() ?? [];
         var owner = context.User.FindFirstValue("oid");
+        var clients = builder.Configuration.GetSection("Authentication:AllowedClientIds").Get<string[]>() ?? [];
         return !string.IsNullOrWhiteSpace(owner) && allowed.Contains(owner, StringComparer.OrdinalIgnoreCase)
+            && clients.Contains(context.User.FindFirstValue("azp"), StringComparer.OrdinalIgnoreCase)
             && (context.User.FindFirstValue("scp") ?? "").Split(' ').Contains("access_as_user");
     })));
 builder.Services.AddCors(options => options.AddDefaultPolicy(policy =>
     policy.WithOrigins(builder.Configuration.GetSection("AllowedOrigins").Get<string[]>() ?? [])
         .WithMethods("GET", "POST", "DELETE").WithHeaders("Authorization", "Content-Type")));
+// Abuse Bounds: Limit authenticated requests per owner; no queued requests consume bank-provider quota.
+builder.Services.AddRateLimiter(options =>
+{
+    options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+    options.AddPolicy("BankRequests", context => RateLimitPartition.GetFixedWindowLimiter(
+        context.User.FindFirstValue("oid") ?? "anonymous", _ => new FixedWindowRateLimiterOptions
+        { PermitLimit = 60, Window = TimeSpan.FromMinutes(1), QueueLimit = 0 }));
+});
 
 var app = builder.Build();
+// Blazor Boot: Permit only the build-generated import map, without allowing arbitrary inline scripts.
+var indexPath = Path.Combine(app.Environment.WebRootPath ?? Path.Combine(app.Environment.ContentRootPath, "wwwroot"), "index.html");
+var importMap = File.Exists(indexPath) ? Regex.Match(File.ReadAllText(indexPath), "<script type=\"importmap\">([\\s\\S]*?)</script>") : Match.Empty;
+var importMapHash = importMap.Success ? $" 'sha256-{Convert.ToBase64String(SHA256.HashData(Encoding.UTF8.GetBytes(importMap.Groups[1].Value.ReplaceLineEndings("\n"))))}'" : "";
 // Secret Validation: Fail startup rather than accepting bank connections without encryption.
 _ = app.Services.GetRequiredService<TokenCipher>();
 app.Use(async (context, next) =>
 {
     context.Response.Headers.CacheControl = "no-store";
+    context.Response.Headers["X-Content-Type-Options"] = "nosniff";
+    context.Response.Headers["X-Frame-Options"] = "DENY";
+    context.Response.Headers["Referrer-Policy"] = "no-referrer";
+    context.Response.Headers["Permissions-Policy"] = "camera=(), microphone=(), geolocation=(), payment=()";
+    if (context.Request.IsHttps) context.Response.Headers["Strict-Transport-Security"] = "max-age=31536000";
+    // Origin Isolation: Only the bank frontend lives here; third-party editors cannot frame it.
+    context.Response.Headers["Content-Security-Policy"] = $"default-src 'self'; script-src 'self' 'wasm-unsafe-eval'{importMapHash} https://cdn.plaid.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://cdn.plaid.com; connect-src 'self' https://login.microsoftonline.com https://*.msidentity.com https://*.msftidentity.com https://production.plaid.com https://sandbox.plaid.com; frame-src 'self' https://login.microsoftonline.com https://cdn.plaid.com; object-src 'none'; base-uri 'self'; frame-ancestors 'none'; form-action 'self' https://login.microsoftonline.com";
     try { await next(context); }
     catch (PlaidException ex)
     {
@@ -64,8 +91,19 @@ app.UseHttpsRedirection();
 app.UseCors();
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseRateLimiter();
+app.UseDefaultFiles();
+var staticTypes = new FileExtensionContentTypeProvider();
+staticTypes.Mappings[".dat"] = "application/octet-stream"; // Blazor Globalization: Serve the ICU data file explicitly.
+app.UseStaticFiles(new StaticFileOptions { ContentTypeProvider = staticTypes });
 app.MapGet("/health", () => Results.Ok(new { status = "running" }));
-var bank = app.MapGroup("/api/bank").RequireAuthorization("BankOwner");
+app.MapGet("/bank-config.json", () => Results.Ok(new
+{
+    apiUrl = "/", clientId = builder.Configuration["BankClient:ClientId"],
+    authority = builder.Configuration["Authentication:Authority"]?.Replace("/v2.0", ""),
+    scope = $"api://{builder.Configuration["Authentication:Audience"]}/access_as_user"
+}));
+var bank = app.MapGroup("/api/bank").RequireAuthorization("BankOwner").RequireRateLimiting("BankRequests");
 
 bank.MapPost("/link-token", async (LinkRequest request, ClaimsPrincipal user, BankDb db, PlaidClient plaid, TokenCipher cipher, CancellationToken ct) =>
 {
@@ -126,7 +164,7 @@ bank.MapGet("/connections/{id:guid}/transactions", async (Guid id, string? accou
 {
     var owner = Owner(user);
     if (!await db.Connections.AnyAsync(x => x.Id == id && x.UserId == owner, ct)) return Results.NotFound();
-    if (offset is < 0) return Results.BadRequest();
+    if (offset is < 0 or > 100000 || accountId?.Length > 200) return Results.BadRequest();
     var query = db.Transactions.AsNoTracking().Where(x => x.ConnectionId == id);
     if (!string.IsNullOrEmpty(accountId)) query = query.Where(x => x.AccountId == accountId);
     var rows = await query.OrderByDescending(x => x.Date).ThenBy(x => x.Id).Skip(offset ?? 0).Take(101).ToListAsync(ct);

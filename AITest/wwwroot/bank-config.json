@@ -1,6 +1,0 @@
-{
-  "apiUrl": "https://aicraft-bank-api-gwbweufeehdwg5hz.westus2-01.azurewebsites.net/",
-  "clientId": "786cf86e-5e25-4e27-99d7-f706c2b423d9",
-  "authority": "https://login.microsoftonline.com/50c2b426-5616-4e72-84be-9421429714a2",
-  "scope": "api://51c30675-d300-4b7b-8408-558a19194b1f/access_as_user"
-}

@@ -1,2 +1,5 @@
 # PDF fixtures contain byte offsets; line-ending conversion invalidates their cross-reference tables.
 *.pdf binary
+
+# Preserve the verified upstream MSAL bytes on every checkout.
+BankClient/wwwroot/js/vendor/msal-browser.min.js -text

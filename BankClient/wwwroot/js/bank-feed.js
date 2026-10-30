@@ -5,9 +5,10 @@ export async function create() {
     if (!response.ok) throw new Error('Bank configuration could not be loaded.');
     const config = await response.json();
     if (!config.apiUrl || !config.clientId || !config.authority || !config.scope) return null;
-    const api = new URL(config.apiUrl);
+    const api = new URL(config.apiUrl, document.baseURI);
+    if (api.origin !== new URL(document.baseURI).origin) throw new Error('Bank API must share the isolated banking origin.');
     if (api.protocol !== 'https:' && api.hostname !== 'localhost') throw new Error('Bank API must use HTTPS.');
-    msalPromise ??= import('https://cdn.jsdelivr.net/npm/@azure/msal-browser@3.28.1/+esm');
+    msalPromise ??= import('./vendor/msal-browser.min.js').then(() => window.msal);
     const msal = await msalPromise;
     const auth = new msal.PublicClientApplication({
         auth: { clientId: config.clientId, authority: config.authority,

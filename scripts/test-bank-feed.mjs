@@ -4,11 +4,11 @@ import vm from 'node:vm';
 
 const calls = [], storage = new Map();
 let enabled = false, loggedIn = false, confirmDelete = false;
-const config = { apiUrl: 'https://bank.example/', clientId: 'test', authority: 'https://login.microsoftonline.com/test', scope: 'api://test/access_as_user' };
+const config = { apiUrl: '/', clientId: 'test', authority: 'https://login.microsoftonline.com/test', scope: 'api://test/access_as_user' };
 const context = vm.createContext({
     URL, JSON, Error, Promise, console, AbortController,
-    document: { baseURI: 'https://site.example/AICraft/' },
-    location: { href: 'https://site.example/AICraft/ledger/', pathname: '/AICraft/ledger/' },
+    document: { baseURI: 'https://bank.example/' },
+    location: { href: 'https://bank.example/', pathname: '/' },
     history: { replaceState() {} },
     sessionStorage: { setItem: (key, value) => storage.set(key, value), getItem: key => storage.get(key), removeItem: key => storage.delete(key) },
     window: {
@@ -33,7 +33,8 @@ const authentication = new vm.SyntheticModule(['PublicClientApplication'], funct
     });
 }, { context });
 await authentication.link(() => {}); await authentication.evaluate();
-const module = new vm.SourceTextModule(await fs.readFile(new URL('../AITest/wwwroot/js/bank-feed.js', import.meta.url), 'utf8'), {
+context.window.msal = authentication.namespace;
+const module = new vm.SourceTextModule(await fs.readFile(new URL('../BankClient/wwwroot/js/bank-feed.js', import.meta.url), 'utf8'), {
     context, importModuleDynamically: async () => authentication
 });
 await module.link(() => {}); await module.evaluate();

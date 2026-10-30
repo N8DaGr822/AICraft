@@ -1,9 +1,9 @@
 name: Build and test bank API
 on:
   push:
-    paths: ['BankApi/**', 'BankApi.Tests/**', 'BankApi.slnx', '.github/workflows/bank-api.yml']
+    paths: ['BankApi/**', 'BankClient/**', 'scripts/test-bank-feed.mjs', 'BankApi.Tests/**', 'BankApi.slnx', '.github/workflows/bank-api.yml']
   pull_request:
-    paths: ['BankApi/**', 'BankApi.Tests/**', 'BankApi.slnx', '.github/workflows/bank-api.yml']
+    paths: ['BankApi/**', 'BankClient/**', 'scripts/test-bank-feed.mjs', 'BankApi.Tests/**', 'BankApi.slnx', '.github/workflows/bank-api.yml']
   workflow_dispatch:
 permissions:
   contents: read
@@ -16,7 +16,13 @@ jobs:
         with:
           dotnet-version: '10.0.x'
       - run: dotnet run --project BankApi.Tests/BankApi.Tests.csproj -c Release
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node --experimental-vm-modules scripts/test-bank-feed.mjs
+      - run: dotnet publish BankClient/BankClient.csproj -c Release -o publish/bank-client
       - run: dotnet publish BankApi/BankApi.csproj -c Release -o publish/bank-api
+      - run: cp -r publish/bank-client/wwwroot publish/bank-api/wwwroot
       - uses: actions/upload-artifact@v4
         with:
           name: bank-api
