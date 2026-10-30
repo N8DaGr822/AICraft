@@ -15,6 +15,7 @@
             {
                 <button class="btn btn-primary ms-2" @onclick="() => Connect(null)">Connect bank / resume authorization</button>
                 <button class="btn btn-outline-secondary ms-2" @onclick="SignOut">Sign out</button>
+                <button class="btn btn-outline-secondary ms-2" @onclick="Refresh">Reload connections</button>
                 @foreach (var connection in connections)
                 {
                     <div class="border rounded p-3 mt-3" @key="connection.Id">
@@ -79,10 +80,17 @@
         if (busy || disposed || feed is null) return;
         busy = true; error = null;
         try { await action(); }
-        catch (JSException ex) { error = ex.Message.Split('\n')[0]; status = "Bank request did not complete."; }
+        catch (JSException ex) { error = ex.Message.Split('\n')[0]; status = signedIn ? "Signed in. The bank request did not complete; you can reload connections without signing in again." : "Bank request did not complete."; }
         finally { busy = false; }
     }
-    private async Task Reload() => connections = await feed!.InvokeAsync<List<Connection>>("connections");
+    private async Task Reload()
+    {
+        // Serverless Resume: Keep sign-in success visible while Azure SQL wakes up.
+        status = "Signed in. Loading bank connections; Azure may need a minute to wake up.";
+        StateHasChanged();
+        connections = await feed!.InvokeAsync<List<Connection>>("connections");
+    }
+    private Task Refresh() => Run(async () => { await Reload(); status = "Signed in. Choose Connect bank or sync an existing connection."; });
     private Task SignIn() => Run(async () => { ClearRows(); signedIn = false; connections = []; await feed!.InvokeVoidAsync("signIn"); signedIn = true; await Reload(); status = "Signed in. Choose Connect bank or sync an existing connection."; });
     private Task SignOut() => Run(async () => { await feed!.InvokeVoidAsync("signOut"); signedIn = false; connections = []; ClearRows(); status = "Signed out of the bank feed."; });
     private Task Connect(Guid? id) => Run(async () =>
