@@ -88,3 +88,11 @@ The GitHub Pages editors still share local browser storage with one another. Mov
 5. Confirm actual CommunityAmerica coverage and complete production onboarding before changing to production. Azure SQL integration has been tested with Sandbox data. Live bank sign-in and production OAuth have not been tested.
 
 Provider references: [Plaid Transactions](https://plaid.com/docs/transactions/add-to-app/), [sync semantics](https://plaid.com/docs/transactions/sync-migration/), [institution coverage](https://plaid.com/docs/institutions/), [Microsoft SPA authentication](https://learn.microsoft.com/en-us/entra/identity-platform/scenario-spa-overview).
+
+## Bank export into local bookkeeping
+
+The secure bank screen exports selected posted USD depository transactions (at most 100 per page) as a versioned JSON file. It contains financial records but no sign-in or provider access tokens. Import it through Ledger Reborn > Banking > Bank Transactions, selecting the matching local bank account. Import stages rows without posting journals. Match existing entries or deliberately classify new entries; post transfers once, then match the other side. Opening balances and statement reconciliation remain separate tasks.
+
+Stable source account/transaction IDs prevent repeat imports and reject mapping an existing transaction to another local account. Changed versions of already-imported transactions are rejected for review; there is no automatic correction/reversal workflow. Credit-card account exports are excluded; payments from checking can be classified against a local credit-card liability account. Save exported files privately.
+
+Production Microsoft sign-in, CommunityAmerica linking and transaction retrieval were confirmed by the owner on October 30, 2026. The export/import workflow was validated using synthetic records only.

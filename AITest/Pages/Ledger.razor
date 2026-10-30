@@ -1,9 +1,11 @@
-@page "/ledger"
+@page "/ledger/quick"
+@using Microsoft.AspNetCore.Components.Forms
 @implements IAsyncDisposable
 @inject IJSRuntime JS
 
 <PageTitle>AICraft · Ledger Reborn</PageTitle>
-<h1>Ledger Reborn</h1>
+<h1>Ledger Reborn · Quick bookkeeping</h1>
+<p><a href="ledger">Open the full Ledger Reborn interface</a> · Both views use the same local company ledger. Close one view before opening the other.</p>
 <p class="lead">Local bookkeeping with an optional connected bank feed.</p>
 <p>Try synthetic data first. This lab supports service invoices, payments into Bank, and accrual reports. The Bank section also provides a separately configured connected-bank feed. Payroll and inventory are not included.</p>
 <p>Local ledger changes are saved in this browser on this device. Clearing site data removes them. Download backups to keep a separate copy. The first launch downloads Python from jsDelivr. The optional bank feed uses Microsoft sign-in, Plaid, and your Azure API/SQL database; it is separate from the local ledger.</p>
@@ -23,6 +25,57 @@
     <small>Displayed balances: @loadedReportDate. Invoice balances are current.</small>
 </div>
 @if (activeTab == "Bank") { <BankFeed /> }
+@if (snapshot is not null && activeTab == "Bank")
+{
+    <fieldset disabled="@busy" class="border rounded p-3 mb-3">
+        <legend class="h4">Import bank transactions for review</legend>
+        <p>Export selected rows from the secure bank page. Choose the matching local bank account below, then load that JSON file. Loading adds unposted review rows; it does not change balances. Importing history does not set opening balances or reconcile statements. Only posted USD transactions from deposit accounts are supported.</p>
+        <label for="import-bank-account">Local bank account</label>
+        <select id="import-bank-account" class="form-select mb-2" @bind="importBankAccount">
+            <option value="">Select the matching account</option>
+            @foreach (var account in snapshot.Accounts.Where(x => x.Kind == "asset" && x.Code != "1100" && x.Code != "1200"))
+            { <option value="@account.Code">@account.Code · @account.Name</option> }
+        </select>
+        <InputFile OnChange="ImportBank" accept=".json,application/json" disabled="@(busy || string.IsNullOrEmpty(importBankAccount))" aria-label="Import AICraft bank export" />
+        <p class="mt-2">Repeat imports with the same transaction IDs are skipped. Changed transaction data is rejected for manual review. Reconnecting a bank may issue new IDs, so check for existing entries before posting.</p>
+        <p>For transfers, post one side against the other bank account, then match the other side to that existing entry. For credit-card payments choose a liability account. Match payments already entered through Invoices &amp; payments instead of posting them again.</p>
+        <h3 class="h5">Review queue · all dates</h3>
+        <p>@snapshot.BankRows.Count(x => x.Status == "pending") unposted · @snapshot.BankRows.Count(x => x.Status != "pending") posted or matched. Back up the ledger before posting.</p>
+        @foreach (var row in snapshot.BankRows.Where(x => x.Status == "pending"))
+        {
+            <div class="border rounded p-2 mb-2" @key="row.Id">
+                <p>@row.Date · @row.BankAccount · @row.Name · <strong>@Money(row.AmountCents) USD</strong> (positive = money in)</p>
+                <label for="@($"bank-category-{row.Id}")">Other account / category</label>
+                <select id="@($"bank-category-{row.Id}")" class="form-select" @bind="row.CounterAccount">
+                    <option value="">Choose an account before posting</option>
+                    @foreach (var account in snapshot.Accounts.Where(x => x.Code != row.BankAccount && x.Code != "1100" && x.Code != "1200" && x.Code != "2000"))
+                    { <option value="@account.Code">@account.Code · @account.Name (@account.Kind)</option> }
+                </select>
+                <button class="btn btn-primary my-2" disabled="@(busy || string.IsNullOrEmpty(row.CounterAccount))" @onclick="() => ClassifyBank(row)">Post reviewed transaction</button>
+                <label for="@($"bank-match-{row.Id}")">Or match an existing entry (same bank and amount)</label>
+                <select id="@($"bank-match-{row.Id}")" class="form-select" @bind="row.MatchLineId">
+                    <option value="0">Select an existing entry</option>
+                    @foreach (var line in snapshot.BankLines.Where(x => x.BankAccount == row.BankAccount && x.AmountCents == row.AmountCents && string.CompareOrdinal(x.Date, row.Date) <= 0))
+                    { <option value="@line.Id">#@line.Id · @line.Date · @line.Name · @Money(line.AmountCents)</option> }
+                </select>
+                <button class="btn btn-outline-primary mt-2" disabled="@(busy || row.MatchLineId == 0)" @onclick="() => MatchBank(row)">Match without posting again</button>
+            </div>
+        }
+    </fieldset>
+}
+@if (snapshot is not null && activeTab is "Bank" or "Accounts")
+{
+    <fieldset class="border rounded p-3 mb-3" disabled="@busy">
+        <legend class="h5">Add a bookkeeping account</legend>
+        <p>Use separate asset accounts for checking and savings, and a liability account for credit-card balances. Create categories as needed; existing transactions are not moved.</p>
+        <label for="new-account-code">Unique account code</label><input id="new-account-code" class="form-control" maxlength="40" @bind="newAccountCode" />
+        <label for="new-account-name">Account name</label><input id="new-account-name" class="form-control" maxlength="200" @bind="newAccountName" />
+        <label for="new-account-kind">Kind</label><select id="new-account-kind" class="form-select" @bind="newAccountKind">
+            @foreach (var kind in new[] { "asset", "liability", "income", "expense", "equity" }) { <option value="@kind">@kind</option> }
+        </select>
+        <button class="btn btn-outline-primary mt-2" @onclick="AddAccount">Add account</button>
+    </fieldset>
+}
 @if (snapshot is null && activeTab != "Transactions") { <p>Open the ledger to display your saved local accounts and posted transactions.</p> }
 @if (snapshot is not null && activeTab == "Overview")
 {
@@ -124,6 +177,7 @@
     private string loadedReportDate = "";
     private string activeTab = "Overview", selectedAccount = "1000";
     private LedgerSnapshot? snapshot;
+    private string importBankAccount = "", newAccountCode = "", newAccountName = "", newAccountKind = "asset";
     private static string Money(long cents) => (cents / 100m).ToString("N2", System.Globalization.CultureInfo.GetCultureInfo("en-US"));
     private static string Date(DateTime date) => date.ToString("yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
     private static long Cents(decimal amount)
@@ -168,6 +222,23 @@
         catch (Exception ex) when (ex is JSException or ArgumentException) { error = ex.Message.Split('\n')[0]; status = "Operation did not complete. Check the error before retrying."; }
         finally { busy = false; }
     }
+    private Task AddAccount() => Run("account", () => new { code = newAccountCode, name = newAccountName, kind = newAccountKind });
+    private Task ClassifyBank(BankReview row) => Run("bank_classify", () => new { id = row.Id, account = row.CounterAccount });
+    private Task MatchBank(BankReview row) => Run("bank_match", () => new { id = row.Id, lineId = row.MatchLineId });
+    private async Task ImportBank(InputFileChangeEventArgs args)
+    {
+        if (busy || !ready || editor is null || string.IsNullOrEmpty(importBankAccount)) return;
+        busy = true; backupReady = false; error = null;
+        try
+        {
+            using var reader = new StreamReader(args.File.OpenReadStream(512 * 1024));
+            var contents = await reader.ReadToEndAsync();
+            await Load("bank_import", new { contents, bankAccount = importBankAccount });
+            status = "Import reviewed and saved. Existing IDs were skipped; unposted rows are in the review queue. Balances change only when you post.";
+        }
+        catch (Exception ex) when (ex is JSException or IOException or InvalidOperationException) { error = ex.Message.Split('\n')[0]; status = "Import did not complete. No new rows were posted."; }
+        finally { busy = false; }
+    }
     private Task AddCustomer() => Run("contact", () => new { name = customerName });
     private Task CreateInvoice() => Run("invoice", () => new { contactId = customerId, date = Date(invoiceDate), description, amountCents = Cents(invoiceAmount), requestId = Guid.NewGuid().ToString() });
     private Task ReceivePayment() => Run("payment", () => new { invoiceId, date = Date(paymentDate), amountCents = Cents(paymentAmount), requestId = Guid.NewGuid().ToString() });
@@ -188,12 +259,33 @@
     }
     public sealed class LedgerSnapshot
     {
+        public List<BankReview> BankRows { get; set; } = [];
+        public List<BankLine> BankLines { get; set; } = [];
         public List<Customer> Contacts { get; set; } = [];
         public List<Invoice> Invoices { get; set; } = [];
         public List<BalanceRow> Rows { get; set; } = [];
         public long ProfitCents { get; set; }
         public List<AccountInfo> Accounts { get; set; } = [];
         public List<LedgerRow> LedgerRows { get; set; } = [];
+    }
+    public sealed class BankReview
+    {
+        public int Id { get; set; }
+        public string BankAccount { get; set; } = "";
+        public string Date { get; set; } = "";
+        public string Name { get; set; } = "";
+        public long AmountCents { get; set; }
+        public string Status { get; set; } = "";
+        public string CounterAccount { get; set; } = "";
+        public int MatchLineId { get; set; }
+    }
+    public sealed class BankLine
+    {
+        public int Id { get; set; }
+        public string BankAccount { get; set; } = "";
+        public string Date { get; set; } = "";
+        public string Name { get; set; } = "";
+        public long AmountCents { get; set; }
     }
     public sealed class AccountInfo { public string Code { get; set; } = ""; public string Name { get; set; } = ""; public string Kind { get; set; } = ""; public long BalanceCents { get; set; } }
     public sealed class LedgerRow

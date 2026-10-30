@@ -3,11 +3,13 @@ import fs from 'node:fs/promises';
 import vm from 'node:vm';
 
 const calls = [], storage = new Map();
+let exportedBlob, downloadClicked = false, revoked = false;
+class DownloadURL extends URL { static createObjectURL(blob) { exportedBlob = blob; return "blob:synthetic"; } static revokeObjectURL() { revoked = true; } }
 let enabled = false, loggedIn = false, confirmDelete = false;
 const config = { apiUrl: '/', clientId: 'test', authority: 'https://login.microsoftonline.com/test', scope: 'api://test/access_as_user' };
 const context = vm.createContext({
-    URL, JSON, Error, Promise, console, AbortController,
-    document: { baseURI: 'https://bank.example/' },
+    URL: DownloadURL, Blob, setTimeout: callback => callback(), JSON, Error, Promise, console, AbortController,
+    document: { baseURI: 'https://bank.example/', body: {append() {}}, createElement: () => ({click() { downloadClicked = true; }, remove() {}}) },
     location: { href: 'https://bank.example/', pathname: '/' },
     history: { replaceState() {} },
     sessionStorage: { setItem: (key, value) => storage.set(key, value), getItem: key => storage.get(key), removeItem: key => storage.delete(key) },
@@ -54,6 +56,11 @@ assert.equal(await feed.disconnect('existing'), false);
 assert.equal(calls.filter(x => x.method === 'DELETE').length, 0, 'Cancel preserves bank connection');
 confirmDelete = true;
 assert.equal(await feed.disconnect('existing'), true);
+const exportData = {format:'aicraft-bank',version:1,accountId:'synthetic-account',transactions:[{id:'synthetic-row',amountCents:1234,currency:'USD',pending:false}]};
+feed.exportFile(exportData);
+assert.deepEqual(JSON.parse(await exportedBlob.text()),exportData);
+assert.ok(downloadClicked && revoked, 'Export creates a download and releases its object URL');
+assert.ok(!(await exportedBlob.text()).includes('synthetic-session-token'),'Export excludes sign-in tokens');
 await feed.signOut();
 await assert.rejects(feed.connections(), /Sign in/);
 await feed.signIn(); feed.dispose();

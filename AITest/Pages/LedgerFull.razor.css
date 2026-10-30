@@ -1,0 +1,2 @@
+.craft-editor { width: 100%; height: calc(100dvh - 190px); min-height: 600px; border: 1px solid #dbe3e9; display: block; }
+details { margin-top: .5rem; }

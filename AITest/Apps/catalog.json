@@ -107,7 +107,7 @@
     "Name": "Ledger Reborn",
     "Route": "ledger",
     "Runtime": "Python · Pyodide",
-    "Description": "Try invoices, payments, and reports with a browser-local ledger.",
+    "Description": "The full Ledger Reborn interface with browser-local books and reviewed bank imports.",
     "Icon": "bi-list-nested-nav-menu",
     "Version": null,
     "Workflow": null,
@@ -116,12 +116,12 @@
     "Category": "Productivity and Office",
     "ComparableSoftware": "Desktop bookkeeping tools (limited experimental workflow)",
     "Features": [
-      "Customers, service invoices and partial payments",
-      "Account registers, trial balance and accrual profit reports",
-      "Browser-local storage and SQLite backup export"
+      "Customers, vendors, invoices, bills, payments and inventory",
+      "Journals, projects, budgets, period locks and reports",
+      "Bank import, matching, reconciliation and SQLite backup export"
     ],
-    "Limitations": "Experimental local ledger. Connected-bank review requires a separately configured Azure API, Microsoft sign-in and Plaid account. Imported feed does not post accounting entries. No payroll, inventory or backup restoration.",
-    "License": "Ledger Reborn engine: MIT. AICraft integration: MIT.",
+    "Limitations": "Preview release, USD only. Bank export requires the separate Azure bank site and Microsoft/Plaid sign-in. Imports require review before posting. No payroll, tax filing or payment execution. SQLite restore requires the desktop edition.",
+    "License": "Ledger Reborn interface and engine: MIT. AICraft integration: MIT.",
     "LicenseUrl": "licenses/LedgerReborn-LICENSE.txt",
     "SourceUrl": "https://github.com/lxistired/ledger-reborn",
     "Access": "Local ledger is free without sign-in. Optional bank feed requires Microsoft sign-in and configured Azure/Plaid services; provider costs may apply.",

@@ -38,10 +38,13 @@
             @if (transactions.Count == 0) { <p>No transactions available. Initial bank history can take time; sync again later.</p> }
             else
             {
-                <div class="table-responsive"><table class="table"><thead><tr><th>Date</th><th>Description</th><th>Amount</th><th>Currency</th><th>Status</th></tr></thead><tbody>
-                    @foreach (var row in transactions) { <tr><td>@row.Date</td><td>@row.Name</td><td>@row.Amount.ToString("0.00##")</td><td>@(row.Currency ?? "Unspecified")</td><td>@(row.Pending ? "Pending" : "Posted at bank")</td></tr> }
+                <div class="table-responsive"><table class="table"><thead><tr><th>Select</th><th>Date</th><th>Description</th><th>Amount</th><th>Currency</th><th>Status</th></tr></thead><tbody>
+                    @foreach (var row in transactions) { <tr><td><input type="checkbox" aria-label="Select transaction for export" disabled="@(busy || !Exportable(row))" @bind="row.Selected" /></td><td>@row.Date</td><td>@row.Name</td><td>@row.Amount.ToString("0.00##")</td><td>@(row.Currency ?? "Unspecified")</td><td>@(row.Pending ? "Pending" : "Posted at bank")</td></tr> }
                 </tbody></table></div>
             }
+            <p>Export posted USD transactions from a checking or savings account, then open local Ledger → Banking → Bank Transactions to import and review. Up to 100 rows from this page; pending, credit-card and non-USD rows cannot be exported. The file contains financial data; store it privately.</p>
+            <button class="btn btn-outline-secondary" disabled="@busy" @onclick="SelectExportable">Select eligible rows on this page</button>
+            <button class="btn btn-primary ms-2" disabled="@(busy || !transactions.Any(x => x.Selected && Exportable(x)))" @onclick="Export">Export selected for bookkeeping</button>
             <button class="btn btn-outline-secondary" disabled="@(busy || offset == 0)" @onclick="() => Page(-100)">Previous</button>
             <button class="btn btn-outline-secondary ms-2" disabled="@(busy || !hasMore)" @onclick="() => Page(100)">Next</button>
         }
@@ -110,6 +113,17 @@
         var page = await feed!.InvokeAsync<TransactionPage>("transactions", selectedConnection, selectedAccount, offset);
         transactions = page.Rows; hasMore = page.HasMore;
     }
+    private bool Exportable(Transaction row) => !row.Pending && row.Currency == "USD" && row.Amount != 0
+        && Math.Abs(row.Amount) <= 1000000m && row.Amount * 100m == decimal.Truncate(row.Amount * 100m)
+        && connections.FirstOrDefault(x => x.Id == selectedConnection)?.Accounts.FirstOrDefault(x => x.Id == selectedAccount)?.Type == "depository";
+    private void SelectExportable() { foreach (var row in transactions) row.Selected = Exportable(row); }
+    private Task Export() => Run(async () =>
+    {
+        var rows = transactions.Where(x => x.Selected && Exportable(x)).Select(x => new { x.Id, x.Date, x.Name, amountCents = (long)(x.Amount * 100m), x.Currency, x.Pending }).ToArray();
+        if (rows.Length == 0) return;
+        await feed!.InvokeVoidAsync("exportFile", new { format = "aicraft-bank", version = 1, accountId = selectedAccount, transactions = rows });
+        status = "Export downloaded. In local Ledger, open Banking → Bank Transactions, select the matching local bank account, and import the file for review.";
+    });
     private void ClearRows() { transactions = []; selectedConnection = null; selectedAccount = ""; offset = 0; hasMore = false; }
     public async ValueTask DisposeAsync()
     {
@@ -123,7 +137,8 @@
         [System.Text.Json.Serialization.JsonPropertyName("account_id")] public string Id { get; set; } = "";
         public string Name { get; set; } = "";
         public string? Mask { get; set; }
+        public string Type { get; set; } = "";
     }
     public sealed class TransactionPage { public List<Transaction> Rows { get; set; } = []; public bool HasMore { get; set; } }
-    public sealed class Transaction { public string Date { get; set; } = ""; public string Name { get; set; } = ""; public decimal Amount { get; set; } public string? Currency { get; set; } public bool Pending { get; set; } }
+    public sealed class Transaction { public string Id { get; set; } = ""; public bool Selected { get; set; } public string Date { get; set; } = ""; public string Name { get; set; } = ""; public decimal Amount { get; set; } public string? Currency { get; set; } public bool Pending { get; set; } }
 }

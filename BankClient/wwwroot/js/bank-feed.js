@@ -85,6 +85,13 @@ export async function create() {
                 else handler.open();
             });
         },
+        exportFile(data) {
+            const url = URL.createObjectURL(new Blob([JSON.stringify(data)], { type: 'application/json' }));
+            const link = document.createElement('a');
+            link.href = url; link.download = 'aicraft-bank-export.json';
+            document.body.append(link); link.click(); link.remove();
+            setTimeout(() => URL.revokeObjectURL(url), 1000);
+        },
         connections: () => request('connections'),
         sync: id => request(`connections/${encodeURIComponent(id)}/sync`, 'POST'),
         transactions: (id, accountId, offset) => request(`connections/${encodeURIComponent(id)}/transactions?accountId=${encodeURIComponent(accountId)}&offset=${offset}`),

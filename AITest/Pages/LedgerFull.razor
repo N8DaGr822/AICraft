@@ -1,0 +1,13 @@
+@page "/ledger"
+
+<PageTitle>AICraft · Ledger Reborn</PageTitle>
+<h1>Ledger Reborn</h1>
+<p>The full upstream interface, with local browser storage. Save operations must finish before leaving. Download SQLite backups regularly.</p>
+<p><a href="https://aicraft-bank-api-gwbweufeehdwg5hz.westus2-01.azurewebsites.net/" target="_blank" rel="noopener noreferrer">Open secure bank feed</a> · <a href="ledger/quick">Quick bookkeeping view</a> · <a href="ledger-reborn/2026.10.12-preview.1/index.html" target="_blank" rel="noopener">Standalone Ledger</a></p>
+<p>For live bank imports: export selected transactions from the secure bank page, then choose Banking → Bank Transactions here, select the matching account, and import the JSON file. Review each row before classifying or matching. Transfers should be posted once, then matched on the other account. Opening balances are not imported.</p>
+<iframe class="craft-editor" src="ledger-reborn/2026.10.12-preview.1/index.html" title="Full Ledger Reborn interface"></iframe>
+<details><summary>Scope and notices</summary>
+    <p>Ledger Reborn 2026.10.12-preview.1 supports journals, customers/vendors, invoices/bills, payments, inventory, bank matching/reconciliation, reports, projects, budgets, period locks, and backup/export. USD only. Payroll, tax filing, real payment execution, and full QuickBooks migration are not implemented upstream. SQLite backup restore requires the desktop edition.</p>
+    <p>My Company shares the same ledger as Quick bookkeeping. Synthetic Test Company is separate. Only one Ledger view can be open at a time to protect saved data. The bank login remains on its separate Azure origin; no sign-in tokens are exported.</p>
+    <a href="ledger-reborn/2026.10.12-preview.1/LICENSE">MIT license</a> · <a href="https://github.com/lxistired/ledger-reborn/tree/d7f6b8a1f4ad6c4ae8b10100d1c93cf15940c21d">Pinned upstream source</a>
+</details>
