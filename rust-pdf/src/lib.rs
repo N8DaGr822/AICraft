@@ -65,6 +65,19 @@ fn selection(text: &str, count: usize) -> Result<Vec<usize>, String> {
 }
 
 impl PdfSession {
+    fn merged_bytes(&self, bytes: Vec<u8>) -> Result<Vec<u8>, String> {
+        let incoming = open_document(bytes)?;
+        if self.count + incoming.count > MAX_PAGES {
+            return Err("The combined document must have at most 200 pages.".into());
+        }
+        let merged = pdfcraft_organize::combine(&[("Current document", &self.original), ("Appended document", &incoming.original)])
+            .map_err(|e| e.to_string())?;
+        let output = write_full(&merged, &SaveOptions { object_streams: false, ..Default::default() }).map_err(|e| e.to_string())?;
+        // Merge Budget: Keep the combined working document within the normal input limits.
+        let checked = open_document(output.clone())?;
+        checked.inspect_json()?;
+        Ok(output)
+    }
     fn inspect_json(&self) -> Result<String, String> {
         let boxes = page_boxes(&self.original).map_err(|e| e.to_string())?;
         let refs = pages(&self.original).map_err(|e| e.to_string())?;
@@ -112,6 +125,9 @@ impl PdfSession {
     pub fn export(&self, text: &str, rotation: i32) -> Result<Vec<u8>, JsValue> {
         self.export_document(text, rotation).map_err(|e| JsValue::from_str(&e))
     }
+    pub fn merge(&self, bytes: Vec<u8>) -> Result<Vec<u8>, JsValue> {
+        self.merged_bytes(bytes).map_err(|e| JsValue::from_str(&e))
+    }
 }
 
 #[cfg(test)]
@@ -119,6 +135,16 @@ mod tests {
     use super::*;
     const SAMPLE: &[u8] = include_bytes!("../../AITest/wwwroot/sample-data/pdf-lab-sample.pdf");
 
+    #[test]
+    fn merge_appends_pages_without_mutating_source() {
+        let source = open_document(SAMPLE.to_vec()).unwrap();
+        let merged = open_document(source.merged_bytes(SAMPLE.to_vec()).unwrap()).unwrap();
+        assert_eq!(merged.count, 6);
+        assert_eq!(source.count, 3);
+        assert_eq!(page_boxes(&merged.original).unwrap()[3], page_boxes(&source.original).unwrap()[0]);
+        assert!(source.merged_bytes(b"invalid".to_vec()).is_err());
+        assert_eq!(source.count, 3);
+    }
     #[test]
     fn ranges_preserve_order_and_reject_invalid_input() {
         assert_eq!(selection("3, 1-2", 3).unwrap(), [2, 0, 1]);

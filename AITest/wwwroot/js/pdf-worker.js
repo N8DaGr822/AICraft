@@ -18,6 +18,18 @@ self.onmessage = async ({ data }) => {
                 self.postMessage({ id: data.id, bytes: bytes.buffer }, [bytes.buffer]);
                 break;
             }
+            case 'merge': {
+                if (!document) throw new Error('Choose a PDF first.');
+                const bytes = document.merge(new Uint8Array(data.bytes));
+                const combined = new PdfSession(bytes);
+                let info;
+                try { info = JSON.parse(combined.inspect()); }
+                catch (error) { combined.free(); throw error; }
+                document.free();
+                document = combined;
+                self.postMessage({ id: data.id, info, bytes: bytes.buffer }, [bytes.buffer]);
+                break;
+            }
             case 'ready':
                 self.postMessage({ id: data.id });
                 break;

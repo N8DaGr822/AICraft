@@ -14,6 +14,22 @@ installer = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(installer)
 
 class BundleTests(unittest.TestCase):
+    def test_effectcraft_uses_isolated_webgl_bootstrap(self):
+        with tempfile.TemporaryDirectory() as folder:
+            cache = Path(folder)
+            archive = cache / 'effectcraft-0.18.0.zip'
+            with zipfile.ZipFile(archive, 'w') as z:
+                for name in ['LICENSE-MIT','LICENSE-APACHE','NOTICE','HOSTING.md','app.wasm']:
+                    z.writestr('effectcraft-web-0.18.0/' + name, 'fixture')
+                z.writestr('effectcraft-web-0.18.0/index.html', '<html><head></head><body>editor</body></html>')
+            app = dict(id='effectcraft',version='0.18.0',url='https://github.com/storytold/effectcraft/releases/download/v0.18.0/effectcraft-web-0.18.0.zip',size=archive.stat().st_size,sha256=hashlib.sha256(archive.read_bytes()).hexdigest())
+            installer.install(app, cache/'out', cache)
+            root = cache/'out/effectcraft/0.18.0-webgl'
+            self.assertIn('Object.defineProperty(navigator, "gpu", {value: undefined})', (root/'index.html').read_text())
+            self.assertEqual((root/'app.wasm').read_bytes(), b'fixture')
+            self.assertEqual((root/'NOTICE').read_text(), 'fixture')
+            self.assertFalse((cache/'out/effectcraft/0.18.0').exists())
+
     def test_verified_install_and_tamper_detection(self):
         with tempfile.TemporaryDirectory() as folder:
             cache = Path(folder)

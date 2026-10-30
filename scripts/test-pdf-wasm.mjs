@@ -31,6 +31,16 @@ try {
     assert.throws(() => new PdfSession(new Uint8Array()));
     assert.throws(() => new PdfSession(new TextEncoder().encode('not a PDF')));
     assert.throws(() => new PdfSession(new Uint8Array(15 * 1024 * 1024 + 1)));
+    const merged = source.merge(output);
+    const mergedSession = new PdfSession(merged);
+    try {
+        const mergedInfo = JSON.parse(mergedSession.inspect());
+        assert.equal(mergedInfo.count, 5);
+        assert.equal(mergedInfo.pages[3].rotation, 90);
+        assert.equal(mergedInfo.pages[3].width, 500);
+        assert.equal(JSON.parse(source.inspect()).count, 3);
+        assert.throws(() => source.merge(new TextEncoder().encode('bad PDF')));
+    } finally { mergedSession.free(); }
     // Keep the exported fixture for an independent PDF reader and visual inspection.
     await mkdir(new URL('../.tools/', import.meta.url), { recursive: true });
     await writeFile(new URL('../.tools/pdf-export-test.pdf', import.meta.url), output);

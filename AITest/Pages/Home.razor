@@ -29,6 +29,15 @@
             <label for="hue">Hue <output>@hue°</output></label>
             <input id="hue" type="range" min="-180" max="180" step="1" @bind="hue" class="form-range" />
             <label class="grayscale"><input type="checkbox" @bind="grayscale" /> Grayscale</label>
+            <h2 class="h5 mt-3">Crop &amp; orientation</h2>
+            <small>Crop percentages refer to the original working copy. Crop, flip, and rotation apply together with color adjustments.</small>
+            <label for="crop-x">Left (%)</label><input id="crop-x" class="form-control" type="number" min="0" max="99" @bind="cropX" />
+            <label for="crop-y">Top (%)</label><input id="crop-y" class="form-control" type="number" min="0" max="99" @bind="cropY" />
+            <label for="crop-width">Crop width (%)</label><input id="crop-width" class="form-control" type="number" min="1" max="100" @bind="cropWidth" />
+            <label for="crop-height">Crop height (%)</label><input id="crop-height" class="form-control" type="number" min="1" max="100" @bind="cropHeight" />
+            <label for="photo-rotation">Rotate clockwise</label><select id="photo-rotation" class="form-select" @bind="rotation"><option value="0">0°</option><option value="90">90°</option><option value="180">180°</option><option value="270">270°</option></select>
+            <label><input type="checkbox" @bind="flipHorizontal" /> Flip horizontally</label>
+            <label><input type="checkbox" @bind="flipVertical" /> Flip vertically</label>
             <div class="photo-actions">
                 <button class="btn btn-primary" @onclick="Apply">Apply adjustments</button>
                 <button class="btn btn-outline-secondary" @onclick="Reset">Reset</button>
@@ -56,6 +65,9 @@
     private double exposure, hue;
     private double saturation = 1;
     private bool grayscale;
+    private double cropX, cropY, cropWidth = 100, cropHeight = 100;
+    private int rotation;
+    private bool flipHorizontal, flipVertical;
     private string status = "Loading the photo engine…";
     private string? error;
 
@@ -92,6 +104,7 @@
             exposure = hue = 0;
             saturation = 1;
             grayscale = false;
+            cropX = cropY = rotation = 0; cropWidth = cropHeight = 100; flipHorizontal = flipVertical = false;
             loaded = exportReady = true;
         }
         catch (JSException ex) { error = ex.Message; status = "Photo could not be opened."; }
@@ -106,7 +119,8 @@
         error = null;
         try
         {
-            await editor.InvokeVoidAsync("edit", exposure, saturation, hue, grayscale);
+            await editor.InvokeVoidAsync("edit", exposure, saturation, hue, grayscale,
+                new { x = cropX, y = cropY, cropWidth, cropHeight, rotation, flipHorizontal, flipVertical });
             exportReady = true;
         }
         catch (JSException ex) { error = ex.Message; }
@@ -118,6 +132,7 @@
         exposure = hue = 0;
         saturation = 1;
         grayscale = false;
+        cropX = cropY = rotation = 0; cropWidth = cropHeight = 100; flipHorizontal = flipVertical = false;
         await Apply();
     }
 

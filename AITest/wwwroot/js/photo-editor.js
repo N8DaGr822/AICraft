@@ -89,11 +89,13 @@ export async function create(input, before, after, download) {
                 return `${file.name} · ${width} × ${height}${scale < 1 ? ' · resized working copy' : ''}`;
             } finally { bitmap.close(); }
         },
-        async edit(exposure, saturation, hue, grayscale) {
+        async edit(exposure, saturation, hue, grayscale, geometry) {
             clearDownload();
-            const result = await send({ type: 'edit', exposure, saturation, hue, grayscale });
+            const result = await send({ type: 'edit', exposure, saturation, hue, grayscale, width, height, geometry });
             if (disposed) return;
-            after.getContext('2d').putImageData(new ImageData(new Uint8ClampedArray(result.pixels), width, height), 0, 0);
+            after.width = result.width;
+            after.height = result.height;
+            after.getContext('2d').putImageData(new ImageData(new Uint8ClampedArray(result.pixels), result.width, result.height), 0, 0);
             await prepareDownload();
         },
         dispose() {

@@ -1,4 +1,5 @@
-.craft-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 1rem; margin: 1rem 0; }
-.craft-actions .btn { min-height: 44px; }
-.craft-editor { width: 100%; height: max(600px, 78vh); border: 1px solid #dbe3e9; border-radius: 8px; display: block; background: #202124; }
-@media (max-width: 640px) { .craft-editor { height: 75vh; min-height: 420px; } }
+.craft-heading { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .5rem; margin-bottom: .5rem; }
+.craft-heading h1 { font-size: 1.5rem; margin: 0; }
+.craft-editor { width: 100%; height: calc(100dvh - 150px); min-height: 420px; border: 1px solid #dbe3e9; display: block; background: #202124; }
+.craft-help { margin-top: .5rem; }
+.craft-help a { margin-right: 1rem; }

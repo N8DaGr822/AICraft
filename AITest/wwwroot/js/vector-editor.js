@@ -1,3 +1,5 @@
+import { composeScene } from './vector-scene.js';
+
 export async function create(preview, download) {
     const worker = new Worker(new URL('./vector-worker.js', import.meta.url), { type: 'module' });
     const pending = new Map();
@@ -43,7 +45,13 @@ export async function create(preview, download) {
     return {
         async generate(settings) {
             clearOutput();
-            const result = await send(settings);
+            if (!Array.isArray(settings) || settings.length < 1 || settings.length > 50) throw new Error('Use between 1 and 50 shapes.');
+            const layers = [];
+            for (const layer of settings) {
+                const { x, y, ...shape } = layer;
+                layers.push({ x, y, result: await send(shape) });
+            }
+            const result = composeScene(layers);
             if (stopped) throw new Error('Vector lab closed.');
             outputUrl = URL.createObjectURL(new Blob([result.svg], { type: 'image/svg+xml' }));
             // Preview Isolation: Load generated SVG as an image, never as executable page markup.
@@ -52,10 +60,11 @@ export async function create(preview, download) {
             catch (error) { clearOutput(); throw new Error('Could not display the generated SVG.'); }
             if (stopped) throw new Error('Vector lab closed.');
             download.href = outputUrl;
-            download.download = `aicraft-${settings.shape}.svg`;
+            download.download = 'aicraft-artwork.svg';
             return result;
         },
         clearOutput,
+        invalidateDownload() { download.removeAttribute('href'); },
         dispose() { stop('Vector lab closed.'); clearOutput(); }
     };
 }

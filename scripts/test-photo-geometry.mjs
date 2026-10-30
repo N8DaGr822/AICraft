@@ -1,0 +1,18 @@
+import assert from 'node:assert/strict';
+import { transformPixels } from '../AITest/wwwroot/js/photo-geometry.js';
+const pixels = new Uint8Array([1,0,0,255, 2,0,0,128, 3,0,0,255, 4,0,0,255, 5,0,0,255, 6,0,0,255]);
+const settings = { x:0, y:0, cropWidth:100, cropHeight:100, rotation:0, flipHorizontal:false, flipVertical:false };
+const values = r => Array.from(r.pixels).filter((_, i) => i % 4 === 0);
+assert.deepEqual(transformPixels(pixels,3,2,settings).pixels,pixels);
+const rotated = transformPixels(pixels,3,2,{...settings,rotation:90});
+assert.deepEqual([rotated.width,rotated.height],[2,3]);
+assert.deepEqual(values(rotated),[4,1,5,2,6,3]);
+assert.equal(rotated.pixels[15],128);
+assert.deepEqual(values(transformPixels(pixels,3,2,{...settings,rotation:270})),[3,6,2,5,1,4]);
+assert.deepEqual(values(transformPixels(pixels,3,2,{...settings,rotation:180})),[6,5,4,3,2,1]);
+assert.deepEqual(values(transformPixels(pixels,3,2,{...settings,flipVertical:true})),[4,5,6,1,2,3]);
+assert.deepEqual(values(transformPixels(pixels,3,2,{...settings,flipHorizontal:true})),[3,2,1,6,5,4]);
+assert.deepEqual(values(transformPixels(pixels,3,2,{...settings,y:50,cropHeight:50})),[4,5,6]);
+assert.throws(()=>transformPixels(pixels,3,2,{...settings,x:50}));
+assert.throws(()=>transformPixels(pixels,3,2,{...settings,cropWidth:0}));
+console.log('Photo geometry: crop, rotation, flip, alpha, and bounds passed.');

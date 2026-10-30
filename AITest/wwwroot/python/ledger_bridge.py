@@ -14,7 +14,14 @@ def snapshot(as_of):
     for row in book.conn.execute("SELECT id FROM documents WHERE type='invoice' ORDER BY id DESC"):
         doc = book.get_invoice(row['id'])
         invoices.append(dict(id=doc['id'], date=doc['date'], totalCents=doc['total_cents'], outstandingCents=doc['outstanding_cents']))
+    # Account Views: Read posted journal lines and engine balances using the selected report date.
+    accounts = book.account_listing(as_of)['rows']
+    journal = book.general_ledger('0001-01-01', as_of)['rows']
     return dict(contacts=contacts, invoices=invoices, profitCents=profit['net_profit_cents'],
+                accounts=[dict(code=r['code'], name=r['name'], kind=r['kind'], balanceCents=r['normal_balance_cents']) for r in accounts],
+                ledgerRows=[dict(account=r['account_code'], date=r['date'], memo=r['memo'], name=r['name'],
+                                 type=r['type'], debitCents=r['debit_cents'], creditCents=r['credit_cents'],
+                                 balanceCents=r['running_balance_cents']) for r in journal],
                 rows=[dict(code=r['code'], name=r['name'], debitCents=r['debit_cents'], creditCents=r['credit_cents']) for r in trial['rows']])
 
 def dispatch(request_json):

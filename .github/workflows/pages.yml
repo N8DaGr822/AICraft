@@ -41,6 +41,8 @@ jobs:
           node scripts/test-wasm.mjs
           node scripts/test-pdf-wasm.mjs
           node scripts/test-vector-wasm.mjs
+          node scripts/test-photo-geometry.mjs
+          node scripts/test-vector-scene.mjs
       - uses: actions/upload-artifact@v4
         with:
           name: pdf-test-output

@@ -1,10 +1,11 @@
-export async function create(input, download, preview) {
+export async function create(input, download, preview, viewer, sourceLink, mergeInput) {
     input.value = '';
     const worker = new Worker(new URL('./pdf-worker.js', import.meta.url), { type: 'module' });
     const pending = new Map();
     let sequence = 0;
     let stopped = false;
     let downloadUrl;
+    let sourceUrl;
     let filename = 'document';
 
     function clearOutput() {
@@ -12,6 +13,12 @@ export async function create(input, download, preview) {
         downloadUrl = undefined;
         download.removeAttribute('href');
         preview.removeAttribute('href');
+        if (sourceUrl) viewer.src = sourceUrl;
+    }
+    function showSource(blob) {
+        if (sourceUrl) URL.revokeObjectURL(sourceUrl);
+        sourceUrl = URL.createObjectURL(blob);
+        viewer.src = sourceLink.href = sourceUrl;
     }
     function stop(message) {
         stopped = true;
@@ -51,6 +58,10 @@ export async function create(input, download, preview) {
     return {
         async load(sample) {
             clearOutput();
+            viewer.removeAttribute('src');
+            sourceLink.removeAttribute('href');
+            if (sourceUrl) URL.revokeObjectURL(sourceUrl);
+            sourceUrl = undefined;
             let file;
             if (sample) {
                 input.value = ''; 
@@ -67,8 +78,21 @@ export async function create(input, download, preview) {
                 throw new Error('Choose a PDF between 1 byte and 15 MB.');
             const bytes = await file.arrayBuffer();
             const result = await send({ type: 'load', bytes }, [bytes]);
+            if (stopped) throw new Error('PDF lab closed.');
             filename = file.name.replace(/\.pdf$/i, '');
+            showSource(new Blob([file], { type: 'application/pdf' }));
             return { ...result.info, filename: file.name };
+        },
+        async merge() {
+            clearOutput();
+            const file = mergeInput.files?.[0];
+            if (!file || file.size === 0 || file.size > 15 * 1024 * 1024) throw new Error('Choose a PDF between 1 byte and 15 MB to append.');
+            const bytes = await file.arrayBuffer();
+            const result = await send({ type: 'merge', bytes }, [bytes]);
+            if (stopped) throw new Error('PDF lab closed.');
+            showSource(new Blob([result.bytes], { type: 'application/pdf' }));
+            mergeInput.value = '';
+            return { ...result.info, filename: `${filename} (combined)` };
         },
         async exportPdf(pages, rotation) {
             clearOutput();
@@ -76,6 +100,7 @@ export async function create(input, download, preview) {
             if (stopped) return;
             downloadUrl = URL.createObjectURL(new Blob([result.bytes], { type: 'application/pdf' }));
             download.href = preview.href = downloadUrl;
+            viewer.src = downloadUrl;
             download.download = `${filename}-selected.pdf`;
             return result.bytes.byteLength;
         },
@@ -83,6 +108,9 @@ export async function create(input, download, preview) {
         dispose() {
             stop('PDF lab closed.');
             clearOutput();
+            viewer.removeAttribute('src');
+            sourceLink.removeAttribute('href');
+            if (sourceUrl) URL.revokeObjectURL(sourceUrl);
         }
     };
 }

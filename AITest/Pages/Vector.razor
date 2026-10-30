@@ -12,6 +12,16 @@
     <section class="vector-controls" aria-label="Shape controls">
         <fieldset disabled="@(!ready || busy)">
             <legend class="visually-hidden">Shape settings</legend>
+            <label for="vector-layer">Shape layer (last is on top)</label>
+            <select id="vector-layer" class="form-select" @bind="selectedLayer" @bind:after="SelectLayer">
+                @for (var i = 0; i < layers.Count; i++) { <option value="@i">@(i + 1) · @layers[i].Shape</option> }
+            </select>
+            <div class="vector-actions">
+                <button class="btn btn-outline-primary" disabled="@(layers.Count >= 50)" @onclick="AddLayer">Add shape</button>
+                <button class="btn btn-outline-danger" disabled="@(layers.Count <= 1)" @onclick="RemoveLayer">Remove shape</button>
+            </div>
+            <label for="vector-x">Position X</label><input id="vector-x" type="number" min="-1000" max="1000" class="form-control" @bind="settings.X" @bind:after="Invalidate" />
+            <label for="vector-y">Position Y</label><input id="vector-y" type="number" min="-1000" max="1000" class="form-control" @bind="settings.Y" @bind:after="Invalidate" />
             <label for="vector-shape">Shape</label>
             <select id="vector-shape" class="form-select" @bind="settings.Shape" @bind:after="Invalidate">
                 <option value="rectangle">Rectangle</option><option value="rounded">Rounded rectangle</option>
@@ -47,7 +57,7 @@
             <label for="vector-stroke-width">Stroke width <output>@settings.StrokeWidth</output></label>
             <input id="vector-stroke-width" type="range" min="0" max="40" class="form-range" @bind="settings.StrokeWidth" @bind:event="oninput" @bind:after="Invalidate" />
             <div class="vector-actions">
-                <button class="btn btn-primary" @onclick="Generate">Generate SVG</button>
+                <button class="btn btn-primary" @onclick="Generate">Apply &amp; generate SVG</button>
                 <button class="btn btn-outline-secondary" @onclick="Reset">Reset sample</button>
             </div>
         </fieldset>
@@ -56,8 +66,8 @@
     </section>
     <section class="vector-result" aria-label="Generated artwork">
         <div class="artboard">
-            <img @ref="preview" alt="Generated vector shape" hidden="@(!exportReady)" />
-            @if (!exportReady) { <p>Choose your settings, then generate an SVG.</p> }
+            <img @ref="preview" alt="Vector artwork with editable shape layers" hidden="@(result is null)" />
+            @if (!exportReady) { <p>Changes pending. Apply to update the artwork and download.</p> }
         </div>
         @if (result is not null)
         {
@@ -67,7 +77,7 @@
         <p class="vector-note">Transparent background. Export bounds include rotation and stroke padding. Width and height control the unrotated shape; polygons and stars stretch to fit.</p>
     </section>
 </div>
-<p class="vector-note">Powered by <a href="https://github.com/storytold/vectorcraft">VectorCraft</a> shape generators and transforms. This lab creates individual shapes; SVG import and node editing are not included.</p>
+<p class="vector-note">Powered by <a href="https://github.com/storytold/vectorcraft">VectorCraft</a> shape generators and transforms. Add up to 50 shapes, select a layer to edit it, then apply. SVG import and node editing are not included. Save your SVG before leaving this page.</p>
 
 @code {
     private ElementReference preview, download;
@@ -76,7 +86,25 @@
     private string status = "Loading the vector engine…";
     private string? error;
     private ShapeSettings settings = new();
+    private List<ShapeSettings> layers = [];
+    private int selectedLayer;
     private VectorResult? result;
+
+    protected override void OnInitialized() => layers.Add(settings);
+    private void SelectLayer() => settings = layers[selectedLayer];
+    private async Task AddLayer()
+    {
+        if (busy || layers.Count >= 50) return;
+        settings = new() { X = Math.Min(layers.Count * 40, 1000), Y = Math.Min(layers.Count * 40, 1000) };
+        layers.Add(settings); selectedLayer = layers.Count - 1;
+        await Generate();
+    }
+    private async Task RemoveLayer()
+    {
+        if (busy || layers.Count <= 1) return;
+        layers.RemoveAt(selectedLayer); selectedLayer = Math.Min(selectedLayer, layers.Count - 1);
+        SelectLayer(); await Generate();
+    }
 
     // Blazor Lifecycle: The image and download references are available after first render.
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -111,10 +139,9 @@
     private async Task Invalidate()
     {
         exportReady = false;
-        result = null;
         error = null;
         status = "Settings changed. Generate an SVG to preview and download.";
-        if (editor is not null) await editor.InvokeVoidAsync("clearOutput");
+        if (editor is not null) await editor.InvokeVoidAsync("invalidateDownload");
     }
 
     private async Task Generate()
@@ -127,7 +154,7 @@
         status = "Generating SVG…";
         try
         {
-            result = await editor.InvokeAsync<VectorResult>("generate", settings);
+            result = await editor.InvokeAsync<VectorResult>("generate", layers);
             exportReady = true;
             status = "SVG ready. Download it or adjust the shape and generate again.";
         }
@@ -139,6 +166,7 @@
     {
         if (busy) return;
         settings = new();
+        layers = [settings]; selectedLayer = 0;
         await Generate();
     }
 
@@ -152,6 +180,8 @@
 
     public sealed class ShapeSettings
     {
+        public double X { get; set; }
+        public double Y { get; set; }
         public string Shape { get; set; } = "star";
         public double Width { get; set; } = 320;
         public double Height { get; set; } = 300;

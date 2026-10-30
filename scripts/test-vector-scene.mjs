@@ -1,0 +1,11 @@
+import assert from 'node:assert/strict';
+import { composeScene } from '../AITest/wwwroot/js/vector-scene.js';
+const result = { svg:'<svg width="100" height="50" viewBox="0 0 100 50"><path d="M0 0L100 50" /></svg>', width:100,height:50,anchorCount:2,perimeter:112 };
+const scene = composeScene([{x:-50,y:10,result},{x:100,y:-10,result}]);
+assert.deepEqual([scene.width,scene.height,scene.anchorCount,scene.perimeter],[250,70,4,224]);
+assert.ok(scene.svg.includes('<svg x="0" y="20"'));
+assert.ok(scene.svg.includes('<svg x="150" y="0"'));
+assert.throws(()=>composeScene([]));
+assert.throws(()=>composeScene([{x:Infinity,y:0,result}]));
+assert.throws(()=>composeScene(Array(51).fill({x:0,y:0,result})));
+console.log('Vector scene: multiple layers, negative coordinates, bounds and limits passed.');

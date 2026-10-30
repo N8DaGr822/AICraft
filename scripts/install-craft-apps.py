@@ -30,7 +30,8 @@ def install(app, output, cache):
                 target.write(chunk)
     if archive.stat().st_size != app['size'] or hashlib.sha256(archive.read_bytes()).hexdigest() != app['sha256']:
         raise ValueError(f'{name}: release checksum/size mismatch; remove the cached archive before retrying')
-    root = output / name / version
+    # Cache Isolation: A new scope avoids an older EffectCraft service worker serving its unpatched bootstrap.
+    root = output / name / (version + '-webgl' if name == 'effectcraft' else version)
     root.mkdir(parents=True, exist_ok=True)
     prefix = f'{name}-web-{version}'
     with zipfile.ZipFile(archive) as bundle:
@@ -59,6 +60,16 @@ def install(app, output, cache):
             raise ValueError(f'{name}: missing {required}')
     if not list(root.glob('*.wasm')):
         raise ValueError(f'{name}: missing WebAssembly module')
+    if name == 'effectcraft':
+        # Graphics Compatibility: Select the bundled WebGL renderer before WASM initializes.
+        # Scoped to this document; other Craft apps retain their normal WebGPU behavior.
+        index = root / 'index.html'
+        html = index.read_text(encoding='utf-8')
+        if html.count('<head>') != 1:
+            raise ValueError('effectcraft: bootstrap changed; review graphics compatibility patch')
+        html = html.replace('<head>', '<head>\n<!-- AICraft compatibility: prefer WebGL in this editor. -->\n'
+            '<script>Object.defineProperty(navigator, "gpu", {value: undefined});</script>', 1)
+        index.write_text(html, encoding='utf-8')
     print(f'{name} {version}: checksum verified, installed with notices', flush=True)
 
 if __name__ == '__main__':

@@ -5,7 +5,7 @@
 <PageTitle>AICraft · PDF lab</PageTitle>
 <h1>PDF lab</h1>
 <p class="lead">Keep the pages you need.</p>
-<p>Inspect a PDF, extract pages in your chosen order, and optionally rotate them. Files stay on this device.</p>
+<p>View a PDF, append another document, extract pages in your chosen order, and rotate them. Files stay on this device.</p>
 @if (error is not null)
 {
     <div class="alert alert-danger" role="alert">@error</div>
@@ -20,6 +20,10 @@
         <button class="btn btn-outline-primary" disabled="@(!ready || busy)" @onclick="LoadSample">Try sample PDF</button>
         <fieldset disabled="@(info is null || busy)">
             <legend class="visually-hidden">Export options</legend>
+            <label for="pdf-append">Append another PDF</label>
+            <input id="pdf-append" type="file" accept=".pdf,application/pdf" @ref="mergeInput" class="form-control" />
+            <button class="btn btn-outline-primary" @onclick="Merge">Append document</button>
+            <small>Appends all pages. Combined working copy: up to 15 MB and 200 pages. Then choose pages and rotation below.</small>
             <label for="pdf-pages">Pages to export</label>
             <input id="pdf-pages" class="form-control" @bind="selectedPages" @bind:event="oninput" @bind:after="InvalidateExport" placeholder="1-3, 5" aria-describedby="range-help" />
             <small id="range-help">Use ranges or a list, such as 1-3, 5. Use 3, 1-2 to reorder. Each page can appear once.</small>
@@ -40,6 +44,11 @@
         <button class="btn btn-link" disabled="@busy" @onclick="Start">Restart PDF lab</button>
     </section>
     <section class="pdf-details" aria-label="PDF page information">
+        <div hidden="@(info is null)">
+            <iframe @ref="viewer" title="PDF preview" class="pdf-viewer"></iframe>
+            <a @ref="sourceLink" target="_blank" rel="noopener" class="btn btn-link">Open working PDF in a new tab</a>
+            <p class="text-muted">Preview shows the working document, or the last created export. If your browser cannot display it here, use the new-tab link.</p>
+        </div>
         @if (info is null)
         {
             <div class="empty-state"><h2>Your document, page by page</h2><p>Choose a PDF or try the three-page sample. Page details will appear here.</p></div>
@@ -71,7 +80,7 @@
 <p class="pdf-credit">Powered by <a href="https://github.com/storytold/pdfcraft">PdfCraft</a> Rust libraries. PDF viewing uses your browser's PDF viewer. <a href="vector">Try the vector lab</a>.</p>
 
 @code {
-    private ElementReference fileInput, download, preview;
+    private ElementReference fileInput, download, preview, viewer, sourceLink, mergeInput;
     private IJSObjectReference? module, editor;
     private bool ready, busy, exportReady, disposed;
     private string status = "Loading the PDF engine…";
@@ -106,7 +115,7 @@
             }
             module ??= await JS.InvokeAsync<IJSObjectReference>("import", "./js/pdf-editor.js");
             if (disposed) { await module.DisposeAsync(); return; }
-            editor = await module.InvokeAsync<IJSObjectReference>("create", fileInput, download, preview);
+            editor = await module.InvokeAsync<IJSObjectReference>("create", fileInput, download, preview, viewer, sourceLink, mergeInput);
             if (disposed) { await editor.InvokeVoidAsync("dispose"); await editor.DisposeAsync(); return; }
             ready = true;
             status = "Ready. Choose a PDF or try the sample.";
@@ -141,6 +150,22 @@
     {
         exportReady = false;
         if (editor is not null) await editor.InvokeVoidAsync("clearOutput");
+    }
+
+    private async Task Merge()
+    {
+        if (busy || info is null || editor is null) return;
+        busy = true; exportReady = false; error = null;
+        status = "Combining documents…";
+        try
+        {
+            info = await editor.InvokeAsync<PdfInfo>("merge");
+            selectedPages = $"1-{info.Count}";
+            rotation = 0;
+            status = $"Combined document: {info.Count} pages. Create PDF to save your selection.";
+        }
+        catch (JSException ex) { error = ex.Message.Split('\n')[0]; status = "Merge did not complete. If the engine stopped, restart and reopen your source PDF."; }
+        finally { busy = false; }
     }
 
     private async Task Export()
