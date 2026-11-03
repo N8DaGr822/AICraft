@@ -14,6 +14,27 @@ installer = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(installer)
 
 class BundleTests(unittest.TestCase):
+    def test_photocraft_split_app_resolves_snippets_without_changing_assets(self):
+        with tempfile.TemporaryDirectory() as folder:
+            cache = Path(folder)
+            archive = cache / 'photocraft-0.20.1.zip'
+            files = {name: b'fixture' for name in ['index.html', 'LICENSE-MIT', 'LICENSE-APACHE', 'NOTICE', 'HOSTING.md', 'boot.wasm']}
+            files.update({
+                'app/photocraft-web.js': b"import { activate } from './snippets/eframe/inline0.js';",
+                'snippets/eframe/inline0.js': b'export function activate() {}',
+                'app/parts.txt': b'photocraft-parts 1\napp.part-aa\n',
+                'app/app.part-aa': b'compressed application payload',
+            })
+            with zipfile.ZipFile(archive, 'w') as z:
+                for name, content in files.items():
+                    z.writestr('photocraft-web-0.20.1/' + name, content)
+            app = dict(id='photocraft', version='0.20.1', url='https://github.com/storytold/photocraft/releases/download/v0.20.1/photocraft-web-0.20.1.zip', size=archive.stat().st_size, sha256=hashlib.sha256(archive.read_bytes()).hexdigest())
+            installer.install(app, cache/'out', cache)
+            root = cache/'out/photocraft/0.20.1'
+            for name, content in files.items():
+                self.assertEqual((root/name).read_bytes(), content)
+            self.assertEqual((root/'app/snippets/eframe/inline0.js').read_bytes(), files['snippets/eframe/inline0.js'])
+
     def test_effectcraft_uses_isolated_webgl_bootstrap(self):
         with tempfile.TemporaryDirectory() as folder:
             cache = Path(folder)
@@ -59,7 +80,7 @@ class BundleTests(unittest.TestCase):
     def test_catalog_matches_pinned_releases(self):
         catalog = json.loads(Path('AITest/Apps/catalog.json').read_text(encoding='utf-8'))
         apps = json.loads(installer.MANIFEST.read_text())
-        self.assertEqual(len({app['id'] for app in apps}),10)
+        self.assertEqual(len({app['id'] for app in apps}),11)
         for app in apps:
             entry = next(item for item in catalog if item["Route"] == f'craft/{app["id"]}')
             self.assertEqual(app["version"], entry["Version"])

@@ -8,7 +8,7 @@ Categories: Graphics/image editing, office/productivity, audio/music, video edit
 
 Description: A directory and browser host for focused creative tools and upstream editors. Application pages document features, limitations and licensing.
 
-Use specific application pages when describing alternatives. Photo lab provides basic photo adjustments, not full Photoshop parity; PDF lab organizes pages, not Acrobat-equivalent redaction or text editing. Review actual workflows before associating other products. Do not invent ratings, usage data, certifications or compatibility.
+Use specific application pages when describing alternatives. Photo lab hosts the full PhotoCraft browser editor for layer-based image editing, without claiming full Photoshop parity; PDF lab organizes pages, not Acrobat-equivalent redaction or text editing. Review actual workflows before associating other products. Do not invent ratings, usage data, certifications or compatibility.
 
 SaaSHub: adapt the same factual product information after checking current listing rules.
 Indie Hackers: use the maker story and engineering tradeoffs from the Show HN draft.

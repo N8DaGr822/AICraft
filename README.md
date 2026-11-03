@@ -2,7 +2,13 @@
 
 A directory of free browser-based creative tools with a Blazor WebAssembly editor host and static discovery pages. Hosted on GitHub Pages at https://N8DaGr822.github.io/AICraft/ after deployment.
 
-## First workflow
+## Full PhotoCraft editor
+
+Photo lab opens the complete upstream PhotoCraft 0.20.1 browser editor at `/craft/photocraft`; existing `/photo` links open the same editor. It includes upstream layers, masks, brushes, selections, type, filters, adjustments, document history, PSD support and export. The official web bundle is pinned by size and SHA-256 in `scripts/craft-releases.json` and installed through `scripts/install-craft-apps.py`, locally and in Pages CI. The existing `Craft.razor` host owns the iframe lifetime and offers a standalone editor link. PhotoCraft navigation is deferred until the frame is attached in OnAfterRender, avoiding a blank frame on first load; other editors retain their existing initialization. PhotoCraft 0.20.1 places its JavaScript snippets at the root while its app imports them from app/snippets; the installer supplies that second path with identical bytes.
+
+Run `python scripts/install-craft-apps.py` before launching locally. The bundle preserves its boot WASM, split compressed app payload, JavaScript, assets and upstream notices. WebGPU is used when available with upstream WebGL2 fallback. No cross-origin isolation headers are required. Save/export downloads files; preferences use local storage. Upstream documents no browser autosave/crash recovery, so save before navigation or reload. Device memory and browser support still limit large documents and formats; desktop parity is not guaranteed. The old 4 MP/20 MB limits do not apply to the full editor.
+
+## Lightweight photo workflow (`/photo/basic`)
 
 Choose a JPEG, PNG, or WebP; adjust exposure, saturation, hue, or grayscale; compare the original working copy with the edited output; download a PNG. Files remain in the browser. Each Apply processes the original working copy, so adjustments do not accumulate. Reset restores the original pixels.
 
@@ -12,7 +18,7 @@ For mobile memory limits, input files are limited to 20 MB and working copies to
 
 `Home.razor` owns the controls and component lifetime. `photo-editor.js` owns file decoding, canvases, downloads, and one module worker. `photo-worker.js` calls the Rust WebAssembly module. Pixel buffers stay in JavaScript/Rust rather than crossing the .NET boundary. The Rust wrapper uses PhotoCraft's actual sRGB, HSB, and grayscale conversions, with our own operation sequencing and validation.
 
-PhotoCraft is pinned to commit `c645d5fcc92c4bdd0d925084450699d05a184850`; Cargo.lock pins transitive dependencies. No upstream sources are modified.
+The lightweight PhotoCraft color dependency (independent of the full editor release) is pinned to commit `c645d5fcc92c4bdd0d925084450699d05a184850`; Cargo.lock pins transitive dependencies. No upstream sources are modified.
 
 ## Build locally
 

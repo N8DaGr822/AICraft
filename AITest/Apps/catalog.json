@@ -24,30 +24,30 @@
   },
   {
     "Name": "Photo lab",
-    "Route": "photo",
+    "Route": "craft/photocraft",
     "Runtime": "Rust · WebAssembly",
-    "Description": "Adjust color, crop, rotate, flip, and export a PNG with PhotoCraft.",
+    "Description": "Edit images with PhotoCraft's full browser interface: layers, masks, brushes, text, filters and PSD documents.",
     "Icon": "bi-house-door-fill-nav-menu",
-    "Version": null,
-    "Workflow": null,
+    "Version": "0.20.1",
+    "Workflow": "Open or create a document, edit with layers and tools, then save the document or export an image.",
     "Id": "photo",
     "Slug": "photo",
     "Category": "Graphics and Image Editing",
-    "ComparableSoftware": "Adobe Photoshop (basic photo adjustments only)",
+    "ComparableSoftware": "Adobe Photoshop (layer-based image editing workflows)",
     "Features": [
-      "Exposure, saturation, hue and grayscale adjustments",
-      "Percentage cropping, quarter-turn rotation and horizontal/vertical flips",
-      "Original/edited comparison and PNG export"
+      "Full upstream browser editor with layers, masks and blend modes",
+      "Brushes, selections, text, transforms, adjustments and filters",
+      "PSD documents, image export, and undo/redo history"
     ],
-    "Limitations": "20 MB input; working copies capped at 4 MP and 2560 pixels per side. PNG export omits source metadata. No layer-based photo editing.",
+    "Limitations": "Early-alpha upstream editor. Graphics, formats and large-document capacity depend on the browser and device. Save or export before leaving. Desktop-only capabilities are not guaranteed in the browser.",
     "License": "Upstream engine: MIT OR Apache-2.0. AICraft integration: MIT.",
-    "LicenseUrl": "licenses/PhotoCraft-NOTICE.txt",
+    "LicenseUrl": "craft/photocraft/0.20.1/NOTICE",
     "SourceUrl": "https://github.com/storytold/photocraft",
     "Access": "Free to use in your browser. No AICraft account or subscription required.",
     "Featured": true,
     "DateAdded": "2026-10-29",
     "PreviewImage": null,
-    "DataHandling": "Selected files are processed in browser workers. The lab does not upload documents. Downloads are saved on your device."
+    "DataHandling": "Files and browser storage are managed by the upstream editor on this device. Export backups before clearing site data. Embedded editors share this site's origin; upstream network behavior has not had a complete privacy audit."
   },
   {
     "Name": "PDF lab",

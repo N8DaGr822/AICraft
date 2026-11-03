@@ -9,11 +9,12 @@ else
 {
     <div class="craft-heading"><h1>@app.Name</h1><a href="@BundleUrl">Standalone editor</a></div>
     @* Runtime Ownership: Route changes replace the frame and release the previous editor. *@
-    <iframe @key="AppId" class="craft-editor" src="@BundleUrl" title="@($"{app.Name} browser editor")"
+    <iframe @key="AppId" class="craft-editor" src="@(AppId == "photocraft" && !rendered ? null : BundleUrl)" title="@($"{app.Name} browser editor")"
             allow="fullscreen; clipboard-read; clipboard-write; microphone" allowfullscreen></iframe>
     <details class="craft-help"><summary>Help &amp; notices</summary>
         <p>@app.Workflow Save or export before leaving. Files and storage are managed by the editor on this device.</p>
         <p>Browser build @app.Version. If it cannot start, try the standalone view and check your browser's graphics support.</p>
+        @if (AppId == "photocraft") { <p>Use a desktop-sized window for the full tool panels and dialogs. Save or export before leaving; browser autosave/crash recovery is not available. <a href="photo/basic">Lightweight photo adjustments</a> remain available for smaller tasks.</p> }
         @if (AppId == "effectcraft") { <p>Compatibility mode uses WebGL with background workers and offline caching disabled. Some effects may be slower.</p> }
         <a href="@($"https://github.com/storytold/{AppId}/releases/tag/v{app.Version}")">Release notes</a>
         <a href="@(BundleRoot + "/NOTICE")">Licenses &amp; notices</a>
@@ -23,8 +24,17 @@ else
 @code {
     [Parameter] public string AppId { get; set; } = "";
     private AITest.Apps.AppCatalog.Entry? app;
+    private bool rendered;
     private string BundleRoot => $"craft/{AppId}/{app!.Version}" + (AppId == "effectcraft" ? "-webgl" : "");
     private string BundleUrl => BundleRoot + "/index.html" + (AppId == "effectcraft" ? "?noworkers&nosw" : "");
+
+    // PhotoCraft Startup: Navigate after the frame is attached so initial Blazor rendering does not cancel its load.
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (!firstRender) return;
+        rendered = true;
+        if (AppId == "photocraft") StateHasChanged();
+    }
 
     // Route Validation: Only registered, pinned editors can be embedded.
     protected override void OnParametersSet()

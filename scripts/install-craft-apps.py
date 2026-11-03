@@ -4,6 +4,7 @@ import hashlib
 import json
 from pathlib import Path, PurePosixPath
 import re
+import shutil
 import stat
 import sys
 import urllib.request
@@ -60,6 +61,10 @@ def install(app, output, cache):
             raise ValueError(f'{name}: missing {required}')
     if not list(root.glob('*.wasm')):
         raise ValueError(f'{name}: missing WebAssembly module')
+    if name == 'photocraft' and version == '0.20.1':
+        # PhotoCraft Packaging: app/photocraft-web.js imports ./snippets, but this release
+        # places them at the root. Preserve original bytes and supply the relative import path.
+        shutil.copytree(root / 'snippets', root / 'app/snippets', dirs_exist_ok=True)
     if name == 'effectcraft':
         # Graphics Compatibility: Select the bundled WebGL renderer before WASM initializes.
         # Scoped to this document; other Craft apps retain their normal WebGPU behavior.

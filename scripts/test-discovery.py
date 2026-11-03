@@ -46,6 +46,8 @@ class DiscoveryTests(unittest.TestCase):
                     url=node[0].text
                     self.assertTrue((root/url.removeprefix(module.ORIGIN+base)/'index.html').exists())
                 self.assertIn('id="catalog"', (root/'apps/index.html').read_text())
+                for route in ['photo', 'photo/basic']:
+                    self.assertIn('_framework/', (root/route/'index.html').read_text())
     def test_catalog_has_required_details(self):
         for app in json.loads(module.CATALOG.read_text()):
             for field in ['Id','Name','Slug','Description','Category','Features','Limitations','License','Access','DataHandling']:
