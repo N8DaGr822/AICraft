@@ -2,7 +2,7 @@
 Product: AICraft
 Website: https://n8dagr822.github.io/AICraft/
 Platform: Web browser
-Access: Free to use; no AICraft subscription
+Access: Free browser tools; no AICraft subscription. Optional bank connections require configured services and authorized access; provider costs may apply.
 License classification: Do not classify the entire platform as open source. The original host code is MIT-licensed; upstream components and branding have separate terms.
 Categories: Graphics/image editing, office/productivity, audio/music, video editing, design, PDF utilities.
 

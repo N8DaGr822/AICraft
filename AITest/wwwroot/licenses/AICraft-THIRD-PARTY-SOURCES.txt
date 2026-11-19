@@ -5,9 +5,20 @@ Source: https://github.com/lxistired/tax-reborn/releases/tag/v2026.10.16-preview
 Complete corresponding source and dependency notices: ../tax-reborn/2026.10.16-preview.39/corresponding-source.zip
 License: ../tax-reborn/2026.10.16-preview.39/third-party-notices/Tax-Reborn-AGPL-3.0.txt
 The browser interface is preserved unmodified and runs with offline=1.
+
+Ledger Reborn 2026.10.12-preview.1: MIT.
+Source: https://github.com/lxistired/ledger-reborn/tree/d7f6b8a1f4ad6c4ae8b10100d1c93cf15940c21d
+License: LedgerReborn-LICENSE.txt
+The engine and server are unmodified. AICraft adapts the browser interface and transport for Pyodide, local storage and reviewed bank imports; see the repository's THIRD-PARTY-NOTICES.md for modifications.
+Pyodide 314.0.7 runtime and bundled notices: https://cdn.jsdelivr.net/pyodide/v314.0.7/full/
+
+Optional bank site (hosted separately from the editor site):
 Microsoft MSAL Browser 3.28.1: MIT; https://github.com/AzureAD/microsoft-authentication-library-for-js
 Plaid Link: hosted by Plaid; https://plaid.com/docs/link/
-Reviewed 2026-10-30; original AICraft code: MIT, copyright 2026 Nathen Lentz.
+The bank site serves its bundled MSAL library from its own origin and loads Link from Plaid. Provider services and hosted code retain their own terms. Server package notices accompany their NuGet distributions.
+
+References updated 2026-11-19; release/source inventory reviewed 2026-10-30.
+Original AICraft code: MIT, copyright 2026 Nathen Lentz; see AICraft-LICENSE-MIT.txt.
 Third-party components, assets, fonts and marks retain their own terms.
 These references supplement, and do not replace, the bundled upstream notices.
 
@@ -20,16 +31,20 @@ Hosting compatibility: unchanged root snippets are also copied to app/snippets t
 
 wordcraft 0.12.0
 Source: https://github.com/storytold/wordcraft/tree/v0.12.0
+Full notices: ../craft/wordcraft/0.12.0/NOTICE
 Brand terms (separate from code): https://github.com/storytold/wordcraft/blob/v0.12.0/docs/brand/LICENSE-brand.txt
 Release SHA-256: 4cf6808b762e6d1211a569dd0cac831b7f1e7eb1a41f70cae90bceeb2c6a6acf
 
 gridcraft 0.13.0
 Source: https://github.com/storytold/gridcraft/tree/v0.13.0
+Full notices: ../craft/gridcraft/0.13.0/NOTICE
 Brand terms (separate from code): https://github.com/storytold/gridcraft/blob/v0.13.0/docs/brand/LICENSE-brand.txt
 Release SHA-256: e232edde1898459f13568ca7b1f3feecb4037f0cbb8f6aec86de1a3c096af5dc
 
 deckcraft 0.12.0
 Source: https://github.com/storytold/deckcraft/tree/v0.12.0
+Full notices: ../craft/deckcraft/0.12.0/NOTICE
+Displayed as PowerPCraft in AICraft; the upstream project and release identity remain DeckCraft.
 Brand terms (separate from code): https://github.com/storytold/deckcraft/blob/v0.12.0/docs/brand/LICENSE-brand.txt
 Release SHA-256: 4625fc2b66f0a0065b1cd549d94dd51f4e0f4f6082638d399c530ffdc56ebab5
 Source candidate from release Cargo.lock: https://crates.io/crates/symphonia/0.5.5 (verify actual compiled inclusion; acadrust/Symphonia families use MPL-2.0)
@@ -51,6 +66,7 @@ Source candidate from release Cargo.lock: https://crates.io/crates/symphonia-uti
 
 soundcraft 0.14.0
 Source: https://github.com/storytold/soundcraft/tree/v0.14.0
+Full notices: ../craft/soundcraft/0.14.0/NOTICE
 Brand terms (separate from code): https://github.com/storytold/soundcraft/blob/v0.14.0/docs/brand/LICENSE-brand.txt
 Release SHA-256: 76290a220377d80aa62a3a196c8bcc8b28e01eaf5b0aad912fabf7eb5a9a767d
 Source candidate from release Cargo.lock: https://crates.io/crates/symphonia/0.6.1 (verify actual compiled inclusion; acadrust/Symphonia families use MPL-2.0)
@@ -72,6 +88,7 @@ Source candidate from release Cargo.lock: https://crates.io/crates/symphonia-met
 
 filmcraft 0.14.0
 Source: https://github.com/storytold/filmcraft/tree/v0.14.0
+Full notices: ../craft/filmcraft/0.14.0/NOTICE
 Brand terms (separate from code): https://github.com/storytold/filmcraft/blob/v0.14.0/docs/brand/LICENSE-brand.txt
 Release SHA-256: 58140e222600c3fbb8ab5fdb94b95abf31cf13d2ad057182b7a6b64843a7a330
 Source candidate from release Cargo.lock: https://crates.io/crates/symphonia/0.5.5 (verify actual compiled inclusion; acadrust/Symphonia families use MPL-2.0)
@@ -90,11 +107,13 @@ Source candidate from release Cargo.lock: https://crates.io/crates/symphonia-uti
 
 lightcraft 0.15.0
 Source: https://github.com/storytold/lightcraft/tree/v0.15.0
+Full notices: ../craft/lightcraft/0.15.0/NOTICE
 Brand terms (separate from code): https://github.com/storytold/lightcraft/blob/v0.15.0/docs/brand/LICENSE-brand.txt
 Release SHA-256: fb46de80ad77814ea33efa3d2799edbaca3462c96da88347fb874f4d6fd15564
 
 effectcraft 0.18.0
 Source: https://github.com/storytold/effectcraft/tree/v0.18.0
+Full notices: ../craft/effectcraft/0.18.0-webgl/NOTICE
 Brand terms (separate from code): https://github.com/storytold/effectcraft/blob/v0.18.0/docs/brand/LICENSE-brand.txt
 Release SHA-256: cc3326670a37a62499b132d20773016d20f576714aaf6b4946744ae6876fa2aa
 Source candidate from release Cargo.lock: https://crates.io/crates/symphonia/0.5.5 (verify actual compiled inclusion; acadrust/Symphonia families use MPL-2.0)
@@ -113,23 +132,33 @@ Source candidate from release Cargo.lock: https://crates.io/crates/symphonia-uti
 
 designcraft 0.14.0
 Source: https://github.com/storytold/designcraft/tree/v0.14.0
+Full notices: ../craft/designcraft/0.14.0/NOTICE
 Brand terms (separate from code): https://github.com/storytold/designcraft/blob/v0.14.0/docs/brand/LICENSE-brand.txt
 Release SHA-256: 7d7e5f24d49b07be6c21d9b571f7edd3763bc9f9dd72a9a1dcc61ebd63bcc6bb
 
 cadcraft 0.14.0
 Source: https://github.com/storytold/cadcraft/tree/v0.14.0
+Full notices: ../craft/cadcraft/0.14.0/NOTICE
 Brand terms (separate from code): https://github.com/storytold/cadcraft/blob/v0.14.0/docs/brand/LICENSE-brand.txt
 Release SHA-256: f2fbfb80388dc0315a469d65cf7c966b742f86b6b4d3d405752bdee7428d94e8
 Source candidate from release Cargo.lock: https://crates.io/crates/acadrust/0.6.6 (verify actual compiled inclusion; acadrust/Symphonia families use MPL-2.0)
 
 figcraft 0.12.1
 Source: https://github.com/storytold/figcraft/tree/v0.12.1
+Full notices: ../craft/figcraft/0.12.1/NOTICE
 Brand terms (separate from code): https://github.com/storytold/figcraft/blob/v0.12.1/docs/brand/LICENSE-brand.txt
 Release SHA-256: 8f52f52d4897d35b14c2a347c44ab6362b60b93d6a2f54a17d218111b9006c37
 
 EffectCraft: AICraft patches index.html to prefer WebGL and supplies noworkers/nosw URL flags. WASM payload and upstream notices are preserved.
 LightCraft: upstream NOTICE describes Apache-only segmentation code and optional user-triggered model and GeoNames downloads with separate terms. No model-license rights are granted by AICraft.
-Custom labs: pinned source revisions and dependency notices are documented in THIRD-PARTY-NOTICES.md in the AICraft repository.
+Custom browser labs (separate from the full upstream editors):
+Basic photo: PhotoCraft color/CMS crates, MIT, https://github.com/storytold/photocraft/tree/c645d5fcc92c4bdd0d925084450699d05a184850
+Full notices: PhotoCraft-NOTICE.txt; license texts: PhotoCraft-LICENSE-MIT.txt and PhotoCraft-LICENSE-APACHE.txt.
+PDF: PdfCraft, MIT, https://github.com/storytold/pdfcraft/tree/c735fb7da55264e7cd84eed0688ec0cec5e628d4
+Full notices: PdfCraft-NOTICE.txt; license texts: PdfCraft-LICENSE-MIT.txt and PdfCraft-LICENSE-APACHE.txt.
+Vector: VectorCraft geometry, MIT, https://github.com/storytold/vectorcraft/tree/98830e5dda1d89f94acfa56bd4eaa728a11a856d
+Full notices: VectorCraft-NOTICE.txt; license texts: VectorCraft-LICENSE-MIT.txt and VectorCraft-LICENSE-APACHE.txt.
+The build collects transitive Rust dependency license texts in dependencies/. See each lab's Cargo.lock and THIRD-PARTY-NOTICES.md in the AICraft repository for pinned dependencies and integration details. This index is not a complete dependency or asset audit.
 
 MPL-2.0 text: Symphonia-LICENSE-MPL-2.0.txt
 Retrieved from https://raw.githubusercontent.com/pdeljanov/Symphonia/v0.5.5/LICENSE

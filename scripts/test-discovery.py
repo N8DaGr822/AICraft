@@ -53,4 +53,22 @@ class DiscoveryTests(unittest.TestCase):
             for field in ['Id','Name','Slug','Description','Category','Features','Limitations','License','Access','DataHandling']:
                 self.assertTrue(app[field], (app['Name'],field))
 
+    def test_policy_pages_keep_sections_links_and_editor_isolation(self):
+        for base in ['/AICraft/', '/']:
+            with self.subTest(base=base), tempfile.TemporaryDirectory() as temp:
+                root = Path(temp)
+                module.generate(root, base, '<html><head></head><body><script src="_framework/blazor.js"></script></body></html>')
+                for route in ['about', 'contact', 'privacy', 'terms']:
+                    html = (root/route/'index.html').read_text(encoding='utf-8')
+                    tags = Tags(html).tags
+                    self.assertEqual(sum(t=='h1' for t,a in tags), 1)
+                    self.assertGreater(sum(t=='h2' for t,a in tags), 1)
+                    self.assertEqual([a['href'] for t,a in tags if t=='base'], [base])
+                    self.assertEqual([a['href'] for t,a in tags if t=='link' and a.get('rel')=='canonical'], [module.ORIGIN+base+route+'/'])
+                    links = [a.get('href') for t,a in tags if t=='a']
+                    self.assertIn('https://github.com/N8DaGr822/AICraft/issues', links)
+                    self.assertIn('licenses/AICraft-THIRD-PARTY-SOURCES.txt', links)
+                    self.assertNotIn('_framework/', html)
+                    self.assertNotIn('<script src=', html)
+
 if __name__ == '__main__': unittest.main()

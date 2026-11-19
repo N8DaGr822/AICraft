@@ -20,7 +20,7 @@
     "Featured": false,
     "DateAdded": "2026-10-30",
     "PreviewImage": null,
-    "DataHandling": "Offline mode uses local browser storage. Export backups before clearing site data. Embedded editors share the site's origin."
+    "DataHandling": "Offline mode uses local browser storage, independent of Ledger and the optional bank service. Browser data can be cleared or evicted; export backups. Embedded editors share the site's origin."
   },
   {
     "Name": "Photo lab",
@@ -39,7 +39,7 @@
       "Brushes, selections, text, transforms, adjustments and filters",
       "PSD documents, image export, and undo/redo history"
     ],
-    "Limitations": "Early-alpha upstream editor. Graphics, formats and large-document capacity depend on the browser and device. Save or export before leaving. Desktop-only capabilities are not guaranteed in the browser.",
+    "Limitations": "Early-alpha upstream editor. Graphics, formats and large-document capacity depend on the browser and device. No browser autosave or crash recovery; save or export before leaving. Desktop-only capabilities are not guaranteed in the browser.",
     "License": "Upstream engine: MIT OR Apache-2.0. AICraft integration: MIT.",
     "LicenseUrl": "craft/photocraft/0.20.1/NOTICE",
     "SourceUrl": "https://github.com/storytold/photocraft",
@@ -47,7 +47,7 @@
     "Featured": true,
     "DateAdded": "2026-10-29",
     "PreviewImage": null,
-    "DataHandling": "Files and browser storage are managed by the upstream editor on this device. Export backups before clearing site data. Embedded editors share this site's origin; upstream network behavior has not had a complete privacy audit."
+    "DataHandling": "Files and preferences are managed by the upstream editor on this device. Save or export documents before leaving. Embedded editors share this site's origin; upstream network behavior has not had a complete privacy audit."
   },
   {
     "Name": "PDF lab",
@@ -120,15 +120,15 @@
       "Journals, projects, budgets, period locks and reports",
       "Bank import, matching, reconciliation and SQLite backup export"
     ],
-    "Limitations": "Preview release, USD only. Bank export requires the separate Azure bank site and Microsoft/Plaid sign-in. Imports require review before posting. No payroll, tax filing or payment execution. SQLite restore requires the desktop edition.",
+    "Limitations": "Preview release, USD only. Connected-bank export requires access to the separate Azure bank site, Microsoft sign-in and Plaid bank linking. Imports require review before posting. No payroll, tax filing or payment execution. SQLite restore requires the desktop edition.",
     "License": "Ledger Reborn interface and engine: MIT. AICraft integration: MIT.",
     "LicenseUrl": "licenses/LedgerReborn-LICENSE.txt",
     "SourceUrl": "https://github.com/lxistired/ledger-reborn",
-    "Access": "Local ledger is free without sign-in. Optional bank feed requires Microsoft sign-in and configured Azure/Plaid services; provider costs may apply.",
+    "Access": "Local ledger is free without sign-in. The optional bank feed is restricted to configured, authorized Microsoft accounts and requires Azure/Plaid services; provider costs may apply.",
     "Featured": false,
     "DateAdded": "2026-10-29",
     "PreviewImage": null,
-    "DataHandling": "Local ledger records stay in IndexedDB. The optional connected-bank feed uses Microsoft sign-in, Plaid and your Azure API/SQL database. Bank access tokens are encrypted on the server; disconnect deletes the imported feed."
+    "DataHandling": "Local books stay in browser IndexedDB and are not synchronized with the separate Azure bank service. Import downloaded bank JSON manually for review. The service stores synchronized bank transactions and encrypted provider access tokens in Azure SQL. Disconnect deletes its live feed, not local books or downloaded exports; database backups follow configured retention. Keep local backups."
   },
   {
     "Name": "WordCraft",
@@ -186,7 +186,7 @@
     "Name": "PowerPCraft",
     "Route": "craft/deckcraft",
     "Runtime": "Rust · Official web app",
-    "Description": "Build presentations with slides, text, and shapes.",
+    "Description": "Build presentations with slides, text, and shapes using the upstream DeckCraft browser editor.",
     "Icon": "bi-list-nested-nav-menu",
     "Version": "0.12.0",
     "Workflow": "Create a deck, add a title and a second slide, then save the presentation.",
