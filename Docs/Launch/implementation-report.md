@@ -1,5 +1,7 @@
 # Implementation report — October 30, 2026
 
+This is the historical discovery/launch implementation report, not the current application status. Its test results, application counts and outstanding items describe that phase. See the [current README](../../README.md), [launch checklist](09-launch-checklist.md), and [bank import checklist](../../BankApi/README.md#manual-test-checklist) for subsequent work and current testing guidance. The PDF failure below has not been reverified by the November 11 documentation review.
+
 ## Assessment
 The existing project uses .NET 10 Blazor WebAssembly, three Rust WASM labs, a Python/Pyodide ledger and ten pinned upstream editors. GitHub Actions deploys it to GitHub Pages. The checkout was clean before editing. The published site could not be read through the web tool; assessment used source and local previews.
 
@@ -36,10 +38,10 @@ Browser checks covered dark-theme layout at the preview pane width, comparable-p
 
 The existing PDF WASM test failed: `TypeError: source.merge is not a function`. Rust source already defines merge, but the ignored local generated module is stale. The local wasm-bindgen executable/build output needed to refresh it was unavailable. No PDF processing code changed. CI rebuilds this module before testing; confirm that clean run passes.
 
-## Prioritized remaining work
+## Prioritized remaining work at the time of this report
 1. Run clean CI, verify PDF merge tests, and exercise all fourteen deployed launch/export workflows.
 2. Resolve CADCraft graphics startup or retain its experimental warning. Validate Firefox, Safari and physical phones as well as Chromium.
-3. Choose an AICraft repository license if open-source distribution is intended. Upstream licenses do not license the host.
+3. Choose an AICraft repository license if open-source distribution is intended. Upstream licenses do not license the host. **Subsequently completed:** MIT was selected and added with owner approval, as recorded in the launch checklist; publication and the remaining licensing review are separate checks.
 4. Audit upstream network/storage behavior and review operator-specific Privacy/Terms details.
 5. Capture real screenshots and social artwork. PreviewImage remains reserved, null metadata.
 6. Measure real-device loading, especially large editor bundles, and validate structured data externally. No numeric speedup or search ranking is claimed.

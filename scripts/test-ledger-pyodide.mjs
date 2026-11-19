@@ -127,3 +127,86 @@ for (const [name,params] of Object.entries({profit_loss:{start_date:'2026-01-01'
     assert.equal(response.status,200,name+': '+JSON.stringify(response.json));
 }
 console.log('Full Ledger reports: 12 report routes passed.');
+// Browser Classification Boundary: Direct requests must not bypass document payment allocation.
+function suiteAction(action, payload, company = 'company') {
+    const response = http('/api/action?book=' + company, { action, payload });
+    assert.equal(response.status, 200, action + ': ' + JSON.stringify(response.json));
+    return response.json.result;
+}
+const suiteState = (company = 'company') => http('/api/state?book=' + company).json;
+for (const company of ['company', 'demo']) {
+    if (company === 'demo') suiteAction('create_account', { code: '1001', name: 'Synthetic savings', kind: 'asset' }, company);
+    suiteAction('import_bank_csv', { contents: bankExport([bankRow('guard-in', -2500), bankRow('guard-out', 2500)], 'guard-' + company), bank_account: '1001' }, company);
+    const before = suiteState(company);
+    const pending = before.data.bank_transactions.filter(row => row.bank_account === '1001' && row.status === 'pending');
+    for (const account of ['6300', '1100']) {
+        const valid = { action: 'classify_bank_transaction', payload: { transaction_id: pending[0].id, account } };
+        for (const [path, request] of [
+            ['/api/action?book=' + company + '&unexpected=1', valid],
+            ['/api/action?book=unknown', valid],
+            ['/api/action?book=' + company, { ...valid, unexpected: true }],
+            ['/api/action?book=' + company, { ...valid, payload: { ...valid.payload, unexpected: true } }],
+            ['/api/action?book=' + company, { ...valid, payload: { ...valid.payload, transaction_id: 'not-an-id' } }],
+            ['/api/action?book=' + company, { ...valid, payload: [] }]
+        ]) {
+            const response = http(path, request);
+            assert.ok(response.status >= 400 && response.status < 500, 'Malformed requests remain rejected');
+            assert.deepEqual(suiteState(company), before, 'Invalid queries and payloads cannot mutate a book');
+        }
+    }
+    for (const account of ['1100', '1200', '2000', 1100, 1200, 2000]) {
+        const row = pending.find(row => Math.sign(row.amount_cents) === (String(account) === '1100' ? 1 : -1));
+        const response = http('/api/action?book=' + company, { action: 'classify_bank_transaction', payload: { transaction_id: row.id, account } });
+        assert.equal(response.status, 400, `Reject direct classification to ${account} in ${company}`);
+        assert.match(response.json.error, /Receive Payments.*Pay Bills.*inventory/i);
+        assert.deepEqual(suiteState(company), before, 'Rejected classification changes no journals, documents, payments or review rows');
+        if (company === 'company') {
+            assert.throws(() => call('bank_classify', { id: row.id, account }), /Receive Payments.*Pay Bills.*inventory/i);
+            assert.deepEqual(suiteState(company), before, 'Quick adapter enforces the same boundary, including numeric accounts');
+        }
+    }
+}
+// Proper invoice/bill payments remain supported, and matching them must not post another journal.
+for (const kind of ['invoice', 'bill']) {
+    const contact = suiteAction('create_contact', { name: 'Synthetic ' + kind + ' contact', kind: kind === 'invoice' ? 'customer' : 'vendor' });
+    const document = suiteAction('create_' + kind, {
+        date: '2026-10-01', contact_id: contact.id,
+        lines: [{ description: 'Synthetic payment regression', amount_cents: 2500, account: kind === 'invoice' ? '4000' : '6300' }]
+    });
+    const payment = suiteAction(kind === 'invoice' ? 'receive_payment' : 'pay_bill', {
+        date: '2026-10-02', [kind + '_id']: document.id, amount_cents: 2500, bank_account: '1001'
+    });
+    assert.equal(payment.outstanding_cents, 0);
+    const before = suiteState();
+    const row = before.data.bank_transactions.find(row => row.bank_account === '1001' && row.status === 'pending' && row.amount_cents === (kind === 'invoice' ? 2500 : -2500));
+    const register = http('/api/report?' + new URLSearchParams({ name: 'bank_register', bank_account: '1001' })).json.result;
+    const line = register.rows.find(line => line.entry_id === payment.entry_id);
+    suiteAction('match_bank_transaction', { transaction_id: row.id, entry_line_id: line.id });
+    const after = suiteState();
+    assert.deepEqual(after.data.journals, before.data.journals, 'Matching a payment does not repost');
+    assert.deepEqual(after.data.payments, before.data.payments);
+    assert.equal(after.data[kind === 'invoice' ? 'invoices' : 'bills'].find(row => row.id === document.id).outstanding_cents, 0);
+    assert.equal(after.data.bank_transactions.find(item => item.id === row.id).status, 'matched');
+}
+// The full transport still supports expenses, income, card liabilities and one-post transfers.
+const demoBefore = suiteState('demo');
+for (const [account, cents] of [['6300', 100], ['4000', -100], ['2200', 100], ['1000', 100]]) {
+    suiteAction('import_bank_csv', { contents: bankExport([bankRow('allowed-' + account, cents)], 'allowed'), bank_account: '1001' });
+    const before = suiteState();
+    const row = before.data.bank_transactions.find(row => row.bank_account === '1001' && row.status === 'pending');
+    const classified = suiteAction('classify_bank_transaction', { transaction_id: row.id, account });
+    const after = suiteState();
+    assert.equal(after.data.journals.length, before.data.journals.length + 1);
+    assert.equal(after.data.bank_transactions.find(item => item.id === row.id).status, 'classified');
+    if (account === '1000') {
+        suiteAction('import_bank_csv', { contents: bankExport([bankRow('allowed-transfer-in', -100)], 'allowed-checking'), bank_account: '1000' });
+        const staged = suiteState();
+        const incoming = staged.data.bank_transactions.find(row => row.bank_account === '1000' && row.status === 'pending');
+        const register = http('/api/report?' + new URLSearchParams({ name: 'bank_register', bank_account: '1000' })).json.result;
+        const line = register.rows.find(line => line.entry_id === classified.entry_id);
+        suiteAction('match_bank_transaction', { transaction_id: incoming.id, entry_line_id: line.id });
+        assert.deepEqual(suiteState().data.journals, staged.data.journals, 'The other transfer leg matches without reposting');
+    }
+}
+assert.deepEqual(suiteState('demo'), demoBefore, 'Company payment/classification tests leave demo untouched');
+console.log('Ledger classification boundary: both companies and adapters reject control accounts without mutations; payment allocation, matching and supported classifications passed.');

@@ -52,6 +52,12 @@ def import_bank_export(contents, bank_account, ledger=None):
     return ledger.import_bank_csv(output.getvalue(), bank_account)
 
 
+def validate_bank_classification(account):
+    # Control Accounts: Direct classification cannot allocate document payments or inventory quantities.
+    if str(account) in ('1100', '1200', '2000'):
+        raise ValueError('Use Receive Payments or Pay Bills, then Match; use inventory workflows for stock.')
+
+
 def snapshot(as_of):
     trial = book.trial_balance(as_of)
     profit = book.profit_loss(as_of[:4] + '-01-01', as_of)
@@ -91,8 +97,7 @@ def dispatch(request_json):
     elif action == 'bank_import':
         import_bank_export(args['contents'], args['bankAccount'])
     elif action == 'bank_classify':
-        if args['account'] in ('1100', '1200', '2000'):
-            raise ValueError('Use invoice/bill workflows for receivables/payables and inventory APIs for inventory.')
+        validate_bank_classification(args['account'])
         book.classify_bank_transaction(args['id'], args['account'])
     elif action == 'bank_match':
         book.match_bank_transaction(args['id'], args['lineId'])

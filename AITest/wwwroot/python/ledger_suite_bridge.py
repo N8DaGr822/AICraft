@@ -9,7 +9,7 @@ from urllib.parse import urlparse
 import ledger_server as server
 import ledger_bridge
 from ledger import Ledger
-from ledger_bridge import import_bank_export
+from ledger_bridge import import_bank_export, validate_bank_classification
 
 BOOKS = {'company': Path('/ledger.sqlite'), 'demo': Path('/ledger-demo.sqlite')}
 
@@ -60,6 +60,12 @@ def suite_dispatch(request_json):
     if method == 'POST' and parsed.path == '/api/action':
         data = json.loads(body)
         payload = data.get('payload', {}) if isinstance(data, dict) else {}
+        if isinstance(data, dict) and isinstance(payload, dict) and data.get('action') == 'classify_bank_transaction':
+            try:
+                validate_bank_classification(payload.get('account'))
+            except ValueError as error:
+                handler.send_json(400, dict(error=str(error)))
+                return json.dumps(handler.result)
         if isinstance(data, dict) and isinstance(payload, dict) and data.get('action') == 'import_bank_csv' and str(payload.get('contents', '')).lstrip().startswith('{'):
             if set(data) != {'action', 'payload'} or set(payload) != {'contents', 'bank_account'}:
                 raise ValueError('Invalid bank import fields.')
