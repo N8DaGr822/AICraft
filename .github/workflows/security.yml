@@ -1,0 +1,114 @@
+name: Security checks
+on:
+  push:
+    branches: [main]
+  pull_request:
+  schedule:
+    - cron: '23 7 * * 1'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: security-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  secrets:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Install verified Gitleaks 8.30.1
+        run: |
+          mkdir -p "$RUNNER_TEMP/gitleaks"
+          curl --fail --show-error --location --retry 2 https://github.com/gitleaks/gitleaks/releases/download/v8.30.1/gitleaks_8.30.1_linux_x64.tar.gz -o "$RUNNER_TEMP/gitleaks.tgz"
+          printf '%s  %s\n' '551f6fc83ea457d62a0d98237cbad105af8d557003051f41f3e7ca7b3f2470eb' "$RUNNER_TEMP/gitleaks.tgz" | sha256sum --check
+          tar -xzf "$RUNNER_TEMP/gitleaks.tgz" -C "$RUNNER_TEMP/gitleaks"
+      - name: Scan all fetched Git history without exposing secrets
+        run: '"$RUNNER_TEMP/gitleaks/gitleaks" git --log-opts="--all" --redact=100 --no-banner .'
+
+  nuget:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        project: [AITest/AITest.csproj, BankApi/BankApi.csproj, BankClient/BankClient.csproj, BankApi.Tests/BankApi.Tests.csproj]
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9 # v4
+        with:
+          dotnet-version: '10.0.x'
+      - name: Audit direct and transitive NuGet dependencies
+        # NU1900/NU1905 feed failures and NU1901-NU1904 advisories must fail this job.
+        run: dotnet restore '${{ matrix.project }}' --configfile scripts/security-nuget.config --force --no-http-cache -p:NuGetAudit=true -p:NuGetAuditMode=all -p:NuGetAuditLevel=low -p:TreatWarningsAsErrors=true
+
+  rust:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        lockfile: [rust/Cargo.lock, rust-pdf/Cargo.lock, rust-vector/Cargo.lock]
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - name: Install verified cargo-audit 0.22.2
+        run: |
+          mkdir -p "$RUNNER_TEMP/cargo-audit"
+          curl --fail --show-error --location --retry 2 https://github.com/rustsec/rustsec/releases/download/cargo-audit/v0.22.2/cargo-audit-x86_64-unknown-linux-gnu-v0.22.2.tgz -o "$RUNNER_TEMP/cargo-audit.tgz"
+          printf '%s  %s\n' 'ab28a1bdb54db4d5d8ad5981cf1f959410370b3d28250dbd35f6a44248620e39' "$RUNNER_TEMP/cargo-audit.tgz" | sha256sum --check
+          tar -xzf "$RUNNER_TEMP/cargo-audit.tgz" -C "$RUNNER_TEMP/cargo-audit" --strip-components=1
+      - name: Audit locked Rust dependencies using the current RustSec database
+        # Informational maintenance warnings remain visible; known vulnerabilities fail.
+        run: '"$RUNNER_TEMP/cargo-audit/cargo-audit" audit --file "${{ matrix.lockfile }}" --db "$RUNNER_TEMP/rustsec"'
+
+  javascript:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: '22'
+      - run: node --test scripts/security-inventory.test.mjs
+      - run: node scripts/test-ledger-csv-export.mjs
+      - run: npm ci --prefix scripts/security-js --ignore-scripts --no-audit --no-fund
+      - name: Match the audited inventory to the shipped browser dependencies
+        run: node scripts/security-inventory.mjs
+      - name: Audit explicit browser dependencies and their npm dependency trees
+        run: npm audit --prefix scripts/security-js --audit-level=low
+
+  codeql:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+      security-events: write
+    strategy:
+      fail-fast: false
+      matrix:
+        language: [csharp, javascript-typescript]
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9 # v4
+        if: matrix.language == 'csharp'
+        with:
+          dotnet-version: '10.0.x'
+      - uses: github/codeql-action/init@33d7b85da1a04171e211befe2c739303b9a4c066 # v4
+        with:
+          languages: ${{ matrix.language }}
+          build-mode: none
+          queries: security-extended
+      - uses: github/codeql-action/analyze@33d7b85da1a04171e211befe2c739303b9a4c066 # v4
+        with:
+          category: '/language:${{ matrix.language }}'

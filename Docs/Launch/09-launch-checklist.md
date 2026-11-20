@@ -77,6 +77,7 @@ The factual disclosure pass does not complete the ownership/brand review or the 
 
 ## Next
 
+- [ ] Publish and review the new security workflow results. The [November 19 security review](../Security/2026-11-19-review.md) records local secret/dependency scans, the Ledger CSV mitigation, and remaining maintenance/storage risks; hosted CodeQL has not yet run for that change.
 - [ ] Record genuine DateAdded values for future apps; the initial catalog registration dates were recovered from repository history.
 - [ ] Measure transferred bytes and real-device load times, especially LightCraft.
 - [ ] Audit upstream storage/network behavior and document per-app findings.

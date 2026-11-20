@@ -1,0 +1,9 @@
+{
+  "name": "aicraft-browser-security-inventory",
+  "private": true,
+  "description": "Audit inventory for explicitly versioned browser dependencies; not a complete inventory of prebuilt upstream editors.",
+  "dependencies": {
+    "@azure/msal-browser": "3.28.1",
+    "pyodide": "314.0.7"
+  }
+}
