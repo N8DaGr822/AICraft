@@ -10,6 +10,11 @@ concurrency:
   group: pages-${{ github.ref }}
   cancel-in-progress: true
 jobs:
+  security:
+    uses: ./.github/workflows/security.yml
+    permissions:
+      contents: read
+      security-events: write
   build:
     runs-on: ubuntu-latest
     steps:
@@ -71,8 +76,14 @@ jobs:
         with:
           path: publish/wwwroot
   deploy:
-    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
-    needs: build
+    needs: [build, security]
+    # Require this run's build and confirmation that every security job passed for this SHA.
+    if: >-
+      github.ref == 'refs/heads/main' &&
+      (github.event_name == 'push' || github.event_name == 'workflow_dispatch') &&
+      needs.build.result == 'success' &&
+      needs.security.result == 'success' &&
+      needs.security.outputs.checked_sha == github.sha
     runs-on: ubuntu-latest
     permissions:
       pages: write

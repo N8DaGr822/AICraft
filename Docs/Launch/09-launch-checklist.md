@@ -18,7 +18,8 @@ The owner also reported PASS for the separate [synthetic browser payment check](
 - [x] Confirm CI and production deployment for revision 1ec6b01; see the deployed acceptance record below.
 - [ ] Complete direct-route and refresh smoke checks for the remaining deployed editors; Chrome coverage below is limited.
 - [x] Verify the 15 catalog license/NOTICE URLs, AICraft license, public source index, Tax corresponding-source URL, four policy pages, and GitHub feedback/notices links: all 24 returned HTTP 200 on November 19.
-- [ ] Complete deployed PDF append and export in Chrome and test other editor export/import flows using representative non-sensitive files.
+- [x] Complete deployed PDF merge and download in Chrome; PASS reported by the owner on November 20.
+- [ ] Test other editor export/import flows using representative non-sensitive files.
 - [x] Complete local synthetic Ledger browser acceptance: nine checks passed in Chrome, reported by the owner on November 19; see the [acceptance record](../../BankApi/README.md#chrome-browser-acceptance-recorded-november-19-2026).
 - [x] Complete the separate synthetic browser invoice/bill payment check: allocation, matching and repeat import passed in Chrome, reported by the owner on November 19.
 - [x] Complete live bank export, import and re-import checks on this deployment using the [Ledger bank-import browser checklist](../../BankApi/README.md#manual-test-checklist). PASS reported by the owner; see the deployed acceptance record below.
@@ -57,6 +58,7 @@ GitHub Pages production deployment [44576900529](https://github.com/N8DaGr822/AI
 | Ledger SQLite backup | PASS: a fresh company backup was downloaded and verified locally; restore was not tested. |
 | PDF Lab route and sample | PASS in Chrome: direct navigation and refresh loaded the lab, and the bundled sample opened with three pages. |
 | PDF page generation in Chrome | PASS during screenshot capture: selected pages `3, 1` from the bundled three-page sample and generated a two-page output preview in that order. Downloading/reopening and append were not checked during this capture. The earlier append attempt stopped at the Windows file picker; synthetic CI merge/export tests passed separately. |
+| Deployed PDF merge and download in Chrome | PASS reported by the owner on November 20, 2026; not independently verified by the assistant. |
 | Live bank export/import and duplicate protection | PASS reported by the owner on this deployment after following the live checklist: export posted transactions, stage them in the intended ledger account, verify the signs, amounts, dates and descriptions, then re-import the same file without adding rows or changing the ledger balance. Not independently verified by the assistant. |
 
 ## Local content and asset review - November 19, 2026
