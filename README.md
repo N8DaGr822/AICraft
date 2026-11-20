@@ -92,7 +92,7 @@ Ledger amounts cross the bridge as integer cents. An allowlisted Python adapter 
 The Pyodide test exercises a $100 invoice / $40 payment / $60 remaining balance, balanced journals, invalid payments, integer-cent validation, bank staging/classification/matching, duplicate protection, rollback, SQLite reopening, full-interface transport, company/demo isolation, and report routes:
 
 ```sh
-npm install --prefix .tools/pyodide pyodide@314.0.7 --no-audit --no-fund
+npm ci --prefix scripts/security-js --ignore-scripts --no-audit --no-fund
 node scripts/test-ledger-pyodide.mjs
 ```
 

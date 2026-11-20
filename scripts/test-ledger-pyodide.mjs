@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { readFile, mkdir, writeFile } from 'node:fs/promises';
-import { loadPyodide } from '../.tools/pyodide/node_modules/pyodide/pyodide.mjs';
+import { loadPyodide } from './security-js/node_modules/pyodide/pyodide.mjs';
 const py = await loadPyodide();
 for (const name of ['ledger.py','ledger_bridge.py']) py.FS.writeFile(`/home/pyodide/${name}`, await readFile(new URL(`../AITest/wwwroot/python/${name}`, import.meta.url)));
 await py.runPythonAsync('from ledger_bridge import dispatch, book');
